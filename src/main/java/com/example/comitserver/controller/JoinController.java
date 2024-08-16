@@ -2,12 +2,11 @@ package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
 import com.example.comitserver.service.JoinService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@ResponseBody
+@RestController
 public class JoinController {
     private final JoinService joinService;
 
@@ -16,8 +15,7 @@ public class JoinController {
     }
 
     @PostMapping("/join")
-    public String joinProcess(JoinDTO joinDTO) {
-        System.out.println(joinDTO.getUsername());
+    public String joinProcess(@RequestBody JoinDTO joinDTO) {
         joinService.joinProcess(joinDTO);
         return "ok";
     }
