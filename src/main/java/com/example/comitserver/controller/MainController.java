@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @ResponseBody
 public class MainController {
-
     @GetMapping("/")
     public String mainP() {
-
         return "main Controller";
     }
 }

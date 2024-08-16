@@ -1,6 +1,5 @@
 package com.example.comitserver.jwt;
 
-import com.example.comitserver.dto.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

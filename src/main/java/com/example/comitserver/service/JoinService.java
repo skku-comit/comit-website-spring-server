@@ -13,20 +13,17 @@ public class JoinService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public void joinProcess(JoinDTO joinDTO) {
-
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
 
         Boolean isExist = userRepository.existsByUsername(username);
 
         if (isExist) {
-
             return;
         }
 
