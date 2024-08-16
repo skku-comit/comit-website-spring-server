@@ -1,5 +1,6 @@
 package com.example.comitserver.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,12 +13,15 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
@@ -26,16 +30,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        try {
+            Map<String, String> loginData = objectMapper.readValue(request.getInputStream(), Map.class);
 
-        //클라이언트 요청에서 username, password 추출
-        String username = obtainUsername(request);
-        String password = obtainPassword(request);
+            String username = loginData.get("username");
+            String password = loginData.get("password");
 
-        //스프링 시큐리티에서 username과 password를 검증하기 위해서는 token에 담아야 함
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password, null);
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
 
-        //token에 담은 검증을 위한 AuthenticationManager로 전달
-        return authenticationManager.authenticate(authToken);
+            return authenticationManager.authenticate(authToken);
+        } catch (IOException e) {
+            throw new RuntimeException("Invalid login request", e);
+        }
     }
 
     @Override
