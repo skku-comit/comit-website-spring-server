@@ -1,9 +1,11 @@
 package com.example.comitserver.jwt;
 
+import com.example.comitserver.dto.LoginDTO;
 import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.repository.RefreshRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,19 +16,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Map;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private RefreshRepository refreshRepository;
-
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -35,18 +36,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        LoginDTO loginDTO = new LoginDTO();
+
         try {
-            Map<String, String> loginData = objectMapper.readValue(request.getInputStream(), Map.class);
-
-            String username = loginData.get("username");
-            String password = loginData.get("password");
-
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
-
-            return authenticationManager.authenticate(authToken);
+            ObjectMapper objectMapper = new ObjectMapper();
+            ServletInputStream inputStream = request.getInputStream();
+            String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
+            loginDTO = objectMapper.readValue(messageBody, LoginDTO.class);
         } catch (IOException e) {
-            throw new RuntimeException("Invalid login request", e);
+            throw new RuntimeException(e);
         }
+
+        String username = loginDTO.getUsername();
+        String password = loginDTO.getPassword();
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, password);
+
+        return authenticationManager.authenticate(authToken);
     }
 
     @Override

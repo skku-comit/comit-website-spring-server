@@ -8,6 +8,7 @@ import com.example.comitserver.repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +36,6 @@ public class SecurityConfig {
         this.refreshRepository = refreshRepository;
     }
 
-    //AuthenticationManager Bean 등록
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -48,9 +48,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //cors 설정
+
         http
-                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
@@ -60,11 +60,12 @@ public class SecurityConfig {
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
                         configuration.setMaxAge(3600L);
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                        configuration.setExposedHeaders(Collections.singletonList("access"));
 
                         return configuration;
                     }
-                })));
+                }));
 
         //csrf disable
         http
@@ -78,13 +79,18 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-        //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login", "/", "/join").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/reissue").permitAll()
-                        .anyRequest().authenticated());
+        http.authorizeHttpRequests((auth) -> auth
+                // /login, /join, /logout, /reissue 경로는 모든 사용자에게 열어둠
+                .requestMatchers("/login", "/", "/join", "/logout", "/reissue").permitAll()
+                // /admin 경로는 ADMIN 역할만 접근 가능
+                .requestMatchers("/admin").hasRole("ADMIN")
+                // /admin 외의 GET 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                // /admin 외의 POST 요청은 VERIFIED와 ADMIN만 접근 가능
+                .requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "VERIFIED")
+                // 나머지 요청은 인증된 사용자만 접근 가능
+                .anyRequest().authenticated()
+        );
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
