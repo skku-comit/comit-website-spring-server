@@ -1,6 +1,7 @@
 package com.example.comitserver.service;
 
 import com.example.comitserver.dto.JoinDTO;
+import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,8 +20,11 @@ public class JoinService {
     public void joinProcess(JoinDTO joinDTO) {
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
+        String phoneNumber = joinDTO.getPhoneNumber();
+        String studentId = joinDTO.getStudentId();
+        String email = joinDTO.getEmail();
 
-        Boolean isExist = userRepository.existsByUsername(username);
+        Boolean isExist = userRepository.existsByEmail(email);
 
         if (isExist) {
             return;
@@ -30,7 +34,13 @@ public class JoinService {
 
         data.setUsername(username);
         data.setPassword(bCryptPasswordEncoder.encode(password));
-        data.setRole("ROLE_ADMIN");
+        data.setPhoneNumber(phoneNumber);
+        data.setStudentId(studentId);
+        data.setEmail(email);
+        data.setRole(Role.ROLE_MEMBER);
+
+        data.setPosition("일반부원");
+        data.setIsStaff(false);
 
         userRepository.save(data);
     }

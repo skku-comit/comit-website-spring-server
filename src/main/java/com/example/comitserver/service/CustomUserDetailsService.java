@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -19,17 +18,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userData = userRepository.findByUsername(username);
-        if (userData != null) {
-            return new CustomUserDetails(userData);
-        } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
-        }
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+        return new CustomUserDetails(userEntity);
     }
 
     public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findById(id).orElseThrow(() ->
-                new UsernameNotFoundException("User not found with id: " + id));
+        UserEntity userEntity = userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
         return new CustomUserDetails(userEntity);
     }
 }
