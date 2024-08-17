@@ -7,7 +7,6 @@ import com.example.comitserver.repository.RefreshRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +25,7 @@ import java.util.Map;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
-    private RefreshRepository refreshRepository;
+    private final RefreshRepository refreshRepository;
     public LoginFilter(AuthenticationManager authenticationManager, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
@@ -61,17 +60,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String username = userDetails.getUsername();
 
         // 토큰 생성
-        String accessToken = jwtUtil.createJwt("access", userId, 600000L);
-        String refreshToken = jwtUtil.createJwt("refresh", userId, 86400000L);
+        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
+        String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
 
         // Refresh 토큰 저장
-        addRefreshEntity(userId, refreshToken, 86400000L);
+        addRefreshEntity(userId, refreshToken);
 
         // 응답 설정
         response.setHeader("access", accessToken);
-        response.addCookie(createCookie("refresh", refreshToken));
+        response.addCookie(JWTUtil.createCookie("refresh", refreshToken));
 
-        // ID와 Username을 JSON으로 응답
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
@@ -93,23 +91,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(401);
     }
 
-    private void addRefreshEntity(Long id, String refresh, Long expiredMs) {
-        Date date = new Date(System.currentTimeMillis() + expiredMs);
+    private void addRefreshEntity(Long userId, String refresh) {
+        Date date = new Date(System.currentTimeMillis() + 1209600000L);
 
         RefreshEntity refreshEntity = new RefreshEntity();
-        refreshEntity.setUserId(id);
+        refreshEntity.setUserId(userId);
         refreshEntity.setRefresh(refresh);
         refreshEntity.setExpiration(date.toString());
 
         refreshRepository.save(refreshEntity);
-    }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        return cookie;
     }
 }

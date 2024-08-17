@@ -1,6 +1,7 @@
 package com.example.comitserver.jwt;
 
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -38,5 +39,16 @@ public class JWTUtil {
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    private static final int TWO_WEEKS_IN_SECONDS = 2 * 7 * 24 * 60 * 60;
+
+    public static Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(TWO_WEEKS_IN_SECONDS);
+        //cookie.setSecure(true); // HTTPS 사용 시 활성화
+        //cookie.setPath("/"); // 쿠키 경로 설정
+        cookie.setHttpOnly(true);
+        return cookie;
     }
 }
