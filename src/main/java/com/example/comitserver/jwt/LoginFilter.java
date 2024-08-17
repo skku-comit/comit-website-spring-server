@@ -30,11 +30,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
+        setFilterProcessesUrl("/api/login");
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        LoginDTO loginDTO = new LoginDTO();
+        LoginDTO loginDTO;
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();

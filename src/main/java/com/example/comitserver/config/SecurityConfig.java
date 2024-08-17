@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -21,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-
 import java.util.Collections;
 
 @Configuration
@@ -67,39 +67,27 @@ public class SecurityConfig {
                         return configuration;
                     }
                 }));
-
-        //csrf disable
+        //csrf, Form 로그인 방식, http basic 인증 방식 disable
         http
-                .csrf((auth) -> auth.disable());
-
-        //Form 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
-
-        //http basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
                 // /login, /join, /logout, /reissue 경로는 모든 사용자에게 열어둠
-                .requestMatchers("/login", "/", "/join", "/logout", "/reissue").permitAll()
+                .requestMatchers("/api/login", "/api/join", "/api/logout", "/api/reissue").permitAll()
                 // /admin 경로는 ADMIN 역할만 접근 가능
-                .requestMatchers("/admin").hasRole("ADMIN")
+                .requestMatchers("/api/admin").hasRole("ADMIN")
                 // /admin 외의 GET 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
-                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // /admin 외의 POST 요청은 VERIFIED와 ADMIN만 접근 가능
-                .requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMIN", "VERIFIED")
+                .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("ADMIN", "VERIFIED")
                 // 나머지 요청은 인증된 사용자만 접근 가능
                 .anyRequest().authenticated()
         );
-
         http
-                .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), LoginFilter.class);
-
-        http
-                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
-
-        http
+                .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), LoginFilter.class)
+                .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
         //세션 설정
         http

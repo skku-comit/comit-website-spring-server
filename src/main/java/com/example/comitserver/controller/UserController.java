@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
@@ -22,7 +22,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/users")
     public List<UserEntity> getAllStaffProfiles(@RequestParam(required = false) Boolean isStaff) {
         if (isStaff != null) {
             return userService.getAllUsersByStaffStatus(isStaff);
@@ -30,19 +30,19 @@ public class UserController {
         return List.of(userService.getCurrentUserProfile());
     }
 
-    @GetMapping("/profile")
+    @GetMapping("/users/profile")
     public UserEntity getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         return userService.getUserProfile(userId);
     }
 
-    @PutMapping("/profile")
+    @PutMapping("/users/profile")
     public void updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UserDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.updateUserProfile(userId, userDTO);
     }
 
-    @DeleteMapping("/profile")
+    @DeleteMapping("/users/profile")
     public void deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.deleteUser(userId);

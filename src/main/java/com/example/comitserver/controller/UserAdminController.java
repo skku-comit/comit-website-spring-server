@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api/admin")
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
@@ -18,23 +18,23 @@ public class UserAdminController {
         this.userAdminService = userAdminService;
     }
 
-    @GetMapping
+    @GetMapping("/users")
     public List<UserEntity> getAllUsers() {
         return userAdminService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     public UserEntity getUserById(@PathVariable Long id) {
         return userAdminService.getUserById(id);
     }
 
-    @PatchMapping("/{id}/role")
+    @PatchMapping("/users/{id}/role")
     public void updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
         Role role = Role.valueOf(requestBody.get("role"));
         userAdminService.updateUserRole(id, role);
     }
 
-    @PatchMapping("/{id}/isStaff")
+    @PatchMapping("/users/{id}/isStaff")
     public void updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
         Boolean isStaff = requestBody.get("isStaff");
         userAdminService.updateUserIsStaff(id, isStaff);
