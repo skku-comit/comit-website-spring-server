@@ -77,7 +77,7 @@ public class SecurityConfig {
                 // /login, /join, /logout, /reissue 경로는 모든 사용자에게 열어둠
                 .requestMatchers("/api/login", "/api/join", "/api/logout", "/api/reissue").permitAll()
                 // /admin 경로는 ADMIN 역할만 접근 가능
-                .requestMatchers("/api/admin").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 // /admin 외의 GET 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // /admin 외의 POST 요청은 VERIFIED와 ADMIN만 접근 가능

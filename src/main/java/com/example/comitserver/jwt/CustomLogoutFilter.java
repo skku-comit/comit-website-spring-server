@@ -1,6 +1,7 @@
 package com.example.comitserver.jwt;
 
 import com.example.comitserver.repository.RefreshRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomLogoutFilter extends GenericFilterBean {
     private final JWTUtil jwtUtil;
@@ -86,6 +90,16 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setPath("/");
 
         response.addCookie(cookie);
+
         response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Logout successful");
+
+        try (PrintWriter out = response.getWriter()) {
+            out.write(new ObjectMapper().writeValueAsString(responseBody));
+        }
     }
 }

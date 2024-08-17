@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
 public class ReissueController {
@@ -49,6 +52,9 @@ public class ReissueController {
         response.setHeader("access", newAccess);
         response.addCookie(JWTUtil.createCookie("refresh", newRefresh));
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Reissue Successful");
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
