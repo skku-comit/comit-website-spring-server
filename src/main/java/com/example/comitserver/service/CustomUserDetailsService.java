@@ -21,10 +21,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userData = userRepository.findByUsername(username);
         if (userData != null) {
-            //UserDetails에 담아서 return하면 AutneticationManager가 검증
             return new CustomUserDetails(userData);
+        } else {
+            throw new UsernameNotFoundException("User not found with username: " + username);
         }
+    }
 
-        return null;
+    public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() ->
+                new UsernameNotFoundException("User not found with id: " + id));
+        return new CustomUserDetails(userEntity);
     }
 }

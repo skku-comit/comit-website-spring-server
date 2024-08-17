@@ -1,7 +1,6 @@
 package com.example.comitserver.jwt;
 
-import com.example.comitserver.dto.CustomUserDetails;
-import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.service.CustomUserDetailsService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,16 +9,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class JWTFilter extends OncePerRequestFilter {
+    private final CustomUserDetailsService customUserDetailsService;
 
     private final JWTUtil jwtUtil;
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JWTFilter(JWTUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
         this.jwtUtil = jwtUtil;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
     @Override
@@ -38,31 +39,33 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access token expired");
             return;
         }
 
         // 토큰이 access인지 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
-
         if (!category.equals("access")) {
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid access token");
             return;
         }
 
-        String username = jwtUtil.getUsername(accessToken);
-        String role = jwtUtil.getRole(accessToken);
+        Long userId = jwtUtil.getUserId(accessToken);
 
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUsername(username);
-        userEntity.setRole(role);
-        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
+        if (userId == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in token");
+            return;
+        }
 
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
+
+        UserDetails userDetails = customUserDetailsService.loadUserById(userId);
+
+        if (userDetails == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+            return;
+        }
+
+        Authentication authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

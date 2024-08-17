@@ -1,5 +1,6 @@
 package com.example.comitserver.jwt;
 
+import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.LoginDTO;
 import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.repository.RefreshRepository;
@@ -9,20 +10,18 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
@@ -57,24 +56,36 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
-        String username = authentication.getName();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getUserId();
+        String username = userDetails.getUsername();
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
-        String role = auth.getAuthority();
+        // 토큰 생성
+        String accessToken = jwtUtil.createJwt("access", userId, 600000L);
+        String refreshToken = jwtUtil.createJwt("refresh", userId, 86400000L);
 
-        //토큰 생성
-        String access = jwtUtil.createJwt("access", username, role, 600000L);
-        String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+        // Refresh 토큰 저장
+        addRefreshEntity(userId, refreshToken, 86400000L);
 
-        //Refresh 토큰 저장
-        addRefreshEntity(username, refresh, 86400000L);
+        // 응답 설정
+        response.setHeader("access", accessToken);
+        response.addCookie(createCookie("refresh", refreshToken));
 
-        //응답 설정
-        response.setHeader("access", access);
-        response.addCookie(createCookie("refresh", refresh));
-        response.setStatus(HttpStatus.OK.value());
+        // ID와 Username을 JSON으로 응답
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("id", userId);
+        responseBody.put("username", username);
+
+        try {
+            objectMapper.writeValue(response.getWriter(), responseBody);
+        } catch (IOException e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -82,11 +93,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(401);
     }
 
-    private void addRefreshEntity(String username, String refresh, Long expiredMs) {
+    private void addRefreshEntity(Long id, String refresh, Long expiredMs) {
         Date date = new Date(System.currentTimeMillis() + expiredMs);
 
         RefreshEntity refreshEntity = new RefreshEntity();
-        refreshEntity.setUsername(username);
+        refreshEntity.setUserId(id);
         refreshEntity.setRefresh(refresh);
         refreshEntity.setExpiration(date.toString());
 
