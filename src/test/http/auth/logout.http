@@ -1,0 +1,10 @@
+@baseUrl=http://localhost:8080/api
+
+### Logout
+POST {{baseUrl}}/logout HTTP/1.1
+Content-Type: application/json
+Cookie: {{refresh_token}}
+
+> {%
+    client.global.clearAll()
+%}
