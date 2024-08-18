@@ -24,10 +24,19 @@ public class JoinService {
         String studentId = joinDTO.getStudentId();
         String email = joinDTO.getEmail();
 
-        Boolean isExist = userRepository.existsByEmail(email);
+        // Check if email is already in use
+        if (userRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("Email already exists");
+        }
 
-        if (isExist) {
-            return;
+        // Check if student ID is already in use
+        if (userRepository.existsByStudentId(studentId)) {
+            throw new IllegalArgumentException("Student ID already exists");
+        }
+
+        // Check if phone number is already in use
+        if (userRepository.existsByPhoneNumber(phoneNumber)) {
+            throw new IllegalArgumentException("Phone number already exists");
         }
 
         UserEntity data = new UserEntity();

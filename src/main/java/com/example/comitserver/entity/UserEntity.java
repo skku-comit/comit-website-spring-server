@@ -10,28 +10,33 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String username;
-    @Column(unique = true)
+    @Column(nullable = false)
     private String password;
-    @Column(unique = true)
+
+    @Column(unique = true, nullable = false)
     private String phoneNumber;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String studentId;
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String position;
+    @Column(nullable = false)
     private Boolean isStaff;
 
-    @Column(nullable = true)
+    @Column()
     private String bio;
-    @Column(nullable = true)
+    @Column()
     private String github;
-    @Column(nullable = true)
+    @Column()
     private String blog;
-    @Column(nullable = true)
+    @Column()
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
 }

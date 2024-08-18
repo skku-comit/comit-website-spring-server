@@ -2,10 +2,15 @@ package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
 import com.example.comitserver.service.JoinService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -17,8 +22,12 @@ public class JoinController {
     }
 
     @PostMapping("/join")
-    public String joinProcess(@RequestBody JoinDTO joinDTO) {
+    public ResponseEntity<?> joinProcess(@RequestBody JoinDTO joinDTO) {
         joinService.joinProcess(joinDTO);
-        return "ok";
+
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("message", "Join Successful");
+
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
