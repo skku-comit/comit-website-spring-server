@@ -32,8 +32,7 @@ public class JoinController {
     public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex) {
         return ResponseUtil.createErrorResponse(
                 HttpStatus.CONFLICT,
-                "Conflict",
-                "Duplicate Resource",
+                "Join/DuplicateResource",
                 ex.getMessage()
         );
     }
@@ -48,8 +47,7 @@ public class JoinController {
 
         return ResponseUtil.createErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                "Bad Request",
-                "Validation Failed",
+                "Join/ValidationFailed",
                 errorMessage
         );
     }

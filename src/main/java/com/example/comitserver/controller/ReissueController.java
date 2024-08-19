@@ -28,8 +28,7 @@ public class ReissueController {
         if (refresh == null) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.BAD_REQUEST,
-                    "Bad Request",
-                    "Refresh token missing",
+                    "Reissue/TokenMissing",
                     "The request is missing the required refresh token. Please include a valid refresh token in cookie."
             );
         }
@@ -37,8 +36,7 @@ public class ReissueController {
         if (reissueService.isTokenExpired(refresh)) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.UNAUTHORIZED,
-                    "401 Unauthorized",
-                    "Refresh token expired",
+                    "Reissue/TokenExpired",
                     "The provided refresh token has expired. Please request a new token or reauthenticate."
             );
         }
@@ -46,8 +44,7 @@ public class ReissueController {
         if (!reissueService.isValidRefreshToken(refresh)) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.UNAUTHORIZED,
-                    "401 Unauthorized",
-                    "Invalid refresh token",
+                    "Reissue/InvalidToken",
                     "The provided refresh token is invalid. Please provide a valid refresh token or reauthenticate."
             );
         }
@@ -55,8 +52,7 @@ public class ReissueController {
         if (!reissueService.existsInDatabase(refresh)) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.NOT_FOUND,
-                    "404 Not Found",
-                    "Invalid refresh token",
+                    "Reissue/TokenNotFound",
                     "The provided refresh token is invalid. Please provide a valid refresh token or reauthenticate."
             );
         }

@@ -10,13 +10,14 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class ResponseUtil {
 
     // Create error response in controller
-    public static ResponseEntity<ServerResponseDTO> createErrorResponse(HttpStatus status, String errorType, String title, String detail) {
-        ServerErrorDTO errorDTO = new ServerErrorDTO(errorType, title, detail);
+    public static ResponseEntity<ServerResponseDTO> createErrorResponse(HttpStatus status, String errorType, String detail) {
+        ServerErrorDTO errorDTO = new ServerErrorDTO(errorType + "/" + status.toString().split(" ")[1], detail);
         ServerResponseDTO responseDTO = new ServerResponseDTO(errorDTO, null);
         return new ResponseEntity<>(responseDTO, status);
     }
@@ -30,7 +31,7 @@ public class ResponseUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     // Write error response in filter
-    public static void writeErrorResponse(HttpServletResponse response, HttpStatus status, String errorType, String title, String detail) throws IOException {
+    public static void writeErrorResponse(HttpServletResponse response, HttpStatus status, String errorType, String detail) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -38,8 +39,7 @@ public class ResponseUtil {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("data", null);
         responseBody.put("error", new ServerErrorDTO(
-                errorType,
-                title,
+                errorType + "/" + status.toString().split(" ")[1],
                 detail
         ));
 
