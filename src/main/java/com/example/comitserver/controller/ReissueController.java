@@ -28,7 +28,7 @@ public class ReissueController {
         if (refresh == null) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.BAD_REQUEST,
-                    "400 Bad Request",
+                    "Bad Request",
                     "Refresh token missing",
                     "The request is missing the required refresh token. Please include a valid refresh token in cookie."
             );

@@ -85,7 +85,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.UNAUTHORIZED,
-                    "401 Unauthorized",
+                    "Unauthorized",
                     "Authentication Failed",
                     "Invalid email or password."
             );
@@ -93,7 +93,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
-                    "400 Bad Request",
+                    "Bad Request",
                     "Authentication Failed",
                     "An unknown error occurred. Please check your request and try again later."
             );

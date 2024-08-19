@@ -58,7 +58,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
-                    "400 Bad Request",
+                    "Bad Request",
                     "Logout Failed",
                     "Refresh token is missing. Please provide a valid refresh token."
             );
@@ -71,8 +71,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
         } catch (ExpiredJwtException e) {
             ResponseUtil.writeErrorResponse(
                     response,
-                    HttpStatus.BAD_REQUEST,
-                    "400 Bad Request",
+                    HttpStatus.UNAUTHORIZED,
+                    "Unauthorized",
                     "Logout Failed",
                     "Refresh token has expired. Please provide a valid refresh token."
             );
@@ -85,7 +85,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
-                    "400 Bad Request",
+                    "Bad Request",
                     "Logout Failed",
                     "Invalid token type. Expected a refresh token."
             );
@@ -97,8 +97,8 @@ public class CustomLogoutFilter extends GenericFilterBean {
         if (!isExist) {
             ResponseUtil.writeErrorResponse(
                     response,
-                    HttpStatus.BAD_REQUEST,
-                    "400 Bad Request",
+                    HttpStatus.NOT_FOUND,
+                    "Not Found",
                     "Logout Failed",
                     "Refresh token not found in the database. Please log in again."
             );
