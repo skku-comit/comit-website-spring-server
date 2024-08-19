@@ -1,16 +1,17 @@
 package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
+import com.example.comitserver.dto.ServerResponseDTO;
+import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
+import com.example.comitserver.uitls.ResponseUtil;
+import jakarta.validation.Valid;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -22,12 +23,32 @@ public class JoinController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinProcess(@RequestBody JoinDTO joinDTO) {
-        joinService.joinProcess(joinDTO);
+    public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
+        UserEntity createdUser = joinService.joinProcess(joinDTO);
+        return ResponseUtil.createSuccessResponse(createdUser, HttpStatus.CREATED);
+    }
 
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Join Successful");
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex) {
+        return ResponseUtil.createErrorResponse(
+                HttpStatus.CONFLICT,
+                "Join/DuplicateResource",
+                ex.getMessage()
+        );
+    }
 
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ServerResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        String errorMessage = ex.getBindingResult().getAllErrors().stream()
+                .findFirst()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse("Validation error");
+
+        return ResponseUtil.createErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "Join/ValidationFailed",
+                errorMessage
+        );
     }
 }

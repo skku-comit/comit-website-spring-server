@@ -1,7 +1,7 @@
 package com.example.comitserver.jwt;
 
 import com.example.comitserver.repository.RefreshRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.comitserver.uitls.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -10,12 +10,10 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CustomLogoutFilter extends GenericFilterBean {
     private final JWTUtil jwtUtil;
@@ -46,60 +44,69 @@ public class CustomLogoutFilter extends GenericFilterBean {
         //get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("refresh")) {
+                    refresh = cookie.getValue();
+                    break;
+                }
             }
         }
 
-        //refresh null check
+        // Handle missing refresh token
         if (refresh == null) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ResponseUtil.writeErrorResponse(
+                    response,
+                    HttpStatus.BAD_REQUEST,
+                    "Logout/TokenMissing",
+                    "Refresh token is missing. Please provide a valid refresh token."
+            );
             return;
         }
 
-        //expired check
+        // Handle expired refresh token
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ResponseUtil.writeErrorResponse(
+                    response,
+                    HttpStatus.UNAUTHORIZED,
+                    "Logout/TokenExpired",
+                    "Refresh token has expired. Please provide a valid refresh token."
+            );
             return;
         }
 
-        // 토큰이 refresh인지 확인 (발급시 페이로드에 명시)
+        // Validate token category
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ResponseUtil.writeErrorResponse(
+                    response,
+                    HttpStatus.BAD_REQUEST,
+                    "Logout/InvalidToken",
+                    "Invalid token type. Expected a refresh token."
+            );
             return;
         }
 
-        //DB에 저장되어 있는지 확인
+        // Check if token exists in the database
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
         if (!isExist) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            ResponseUtil.writeErrorResponse(
+                    response,
+                    HttpStatus.NOT_FOUND,
+                    "Logout/TokenNotFound",
+                    "Refresh token not found in the database. Please log in again."
+            );
             return;
         }
 
-        //로그아웃 진행
-        //Refresh 토큰 DB에서 제거
-        refreshRepository.deleteByRefresh(refresh);
-
-        //Refresh 토큰 Cookie 값 0
+        // Invalidate the refresh token cookie
         Cookie cookie = new Cookie("refresh", null);
         cookie.setMaxAge(0);
         cookie.setPath("/");
-
         response.addCookie(cookie);
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("message", "Logout successful");
-
-        try (PrintWriter out = response.getWriter()) {
-            out.write(new ObjectMapper().writeValueAsString(responseBody));
-        }
+        ResponseUtil.writeSuccessResponse(response, null, HttpStatus.OK);
     }
 }
