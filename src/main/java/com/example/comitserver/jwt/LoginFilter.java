@@ -74,7 +74,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         user.put("id", userId);
         user.put("username", username);
 
-        ResponseUtil.writeSuccessResponse(response, user);
+        ResponseUtil.writeSuccessResponse(response, user, HttpStatus.OK);
     }
 
     @Override

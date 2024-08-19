@@ -25,7 +25,7 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
-        return ResponseUtil.createSuccessResponse(createdUser);
+        return ResponseUtil.createSuccessResponse(createdUser, HttpStatus.CREATED);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)

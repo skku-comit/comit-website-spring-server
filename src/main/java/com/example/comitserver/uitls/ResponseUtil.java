@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class ResponseUtil {
@@ -23,9 +22,9 @@ public class ResponseUtil {
     }
 
     // Create success response in controller
-    public static ResponseEntity<ServerResponseDTO> createSuccessResponse(Object data) {
+    public static ResponseEntity<ServerResponseDTO> createSuccessResponse(Object data, HttpStatus status) {
         ServerResponseDTO responseDTO = new ServerResponseDTO(null, data);
-        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
+        return new ResponseEntity<>(responseDTO, status);
     }
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -49,8 +48,8 @@ public class ResponseUtil {
     }
 
     // Write success response in filter
-    public static void writeSuccessResponse(HttpServletResponse response, Object data) throws IOException {
-        response.setStatus(HttpStatus.OK.value());
+    public static void writeSuccessResponse(HttpServletResponse response, Object data, HttpStatus status) throws IOException {
+        response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 

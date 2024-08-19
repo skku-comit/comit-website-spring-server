@@ -66,6 +66,6 @@ public class ReissueController {
         response.setHeader("access", newAccess);
         response.addCookie(JWTUtil.createCookie("refresh", newRefresh));
 
-        return ResponseUtil.createSuccessResponse(null);
+        return ResponseUtil.createSuccessResponse(null, HttpStatus.CREATED);
     }
 }
