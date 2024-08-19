@@ -43,5 +43,5 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy Application
-        run: ssh -o StrictHostKeyChecking=no user@your-server-ip "cd /home/comit && ./deploy.sh"
+        run: ssh -o StrictHostKeyChecking=no comit@59.11.215.13 "cd /home/comit && ./deploy.sh"
         # 서버에서 deploy.sh 스크립트를 실행해 배포
