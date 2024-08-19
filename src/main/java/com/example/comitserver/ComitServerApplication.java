@@ -8,6 +8,3 @@ public class ComitServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ComitServerApplication.class, args);
-	}
-
-}
