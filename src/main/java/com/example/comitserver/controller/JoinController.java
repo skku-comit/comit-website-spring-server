@@ -1,11 +1,11 @@
 package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
-import com.example.comitserver.dto.ServerErrorDTO;
 import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
+import com.example.comitserver.uitls.ResponseUtil;
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -25,26 +25,16 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
-
-        return new ResponseEntity<>(
-                new ServerResponseDTO(null,
-                        createdUser
-                ), HttpStatus.OK
-        );
+        return ResponseUtil.createSuccessResponse(createdUser);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex) {
-        return new ResponseEntity<>(
-                new ServerResponseDTO(
-                        new ServerErrorDTO(
-                                "409 Conflict",
-                                "Duplicate Resource",
-                                ex.getMessage()
-                        ),
-                        null
-                ),
-                HttpStatus.CONFLICT
+        return ResponseUtil.createErrorResponse(
+                HttpStatus.CONFLICT,
+                "409 Conflict",
+                "Duplicate Resource",
+                ex.getMessage()
         );
     }
 
@@ -56,15 +46,11 @@ public class JoinController {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Validation error");
 
-        ServerErrorDTO serverError = new ServerErrorDTO(
+        return ResponseUtil.createErrorResponse(
+                HttpStatus.BAD_REQUEST,
                 "400 Bad Request",
                 "Validation Failed",
                 errorMessage
-        );
-
-        return new ResponseEntity<>(
-                new ServerResponseDTO(serverError, null),
-                HttpStatus.BAD_REQUEST
         );
     }
 }
