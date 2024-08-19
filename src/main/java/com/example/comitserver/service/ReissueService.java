@@ -80,17 +80,4 @@ public class ReissueService {
 
         refreshRepository.save(refreshEntity);
     }
-
-    public boolean isUserIdValidForToken(String refreshToken, Long userId) {
-        Long tokenUserId = getUserIdFromToken(refreshToken);
-        return tokenUserId.equals(userId);
-    }
-
-    public Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
-            return ((CustomUserDetails) userDetails).getUserId();
-        }
-        return null;
-    }
 }

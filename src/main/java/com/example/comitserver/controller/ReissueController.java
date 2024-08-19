@@ -1,5 +1,7 @@
 package com.example.comitserver.controller;
 
+import com.example.comitserver.dto.ServerErrorDTO;
+import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.jwt.JWTUtil;
 import com.example.comitserver.service.ReissueService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,24 +30,51 @@ public class ReissueController {
         String refresh = reissueService.getRefreshTokenFromCookies(request);
 
         if (refresh == null) {
-            return new ResponseEntity<>("refresh token null", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ServerResponseDTO(
+                            new ServerErrorDTO(
+                                    "400 Bad Request",
+                                    "Refresh token missing",
+                                    "The request is missing the required refresh token. Please include a valid refresh token in cookie."
+                            ), null
+                    ), HttpStatus.BAD_REQUEST
+            );
         }
 
         if (reissueService.isTokenExpired(refresh)) {
-            return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ServerResponseDTO(
+                            new ServerErrorDTO(
+                                    "401 Unauthorized",
+                                    "Refresh token expired",
+                                    "The provided refresh token has expired. Please request a new token or reauthenticate."
+                            ), null
+                    ), HttpStatus.UNAUTHORIZED
+            );
         }
 
         if (!reissueService.isValidRefreshToken(refresh)) {
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ServerResponseDTO(
+                            new ServerErrorDTO(
+                                    "401 Unauthorized",
+                                    "Invalid refresh token",
+                                    "The provided refresh token is invalid. Please provide a valid refresh token or reauthenticate."
+                            ), null
+                    ), HttpStatus.UNAUTHORIZED
+            );
         }
 
         if (!reissueService.existsInDatabase(refresh)) {
-            return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
-        }
-
-        //현재 로그인된 id와 토큰의 id를 비교
-        if (!reissueService.isUserIdValidForToken(refresh, reissueService.getCurrentUserId())) {
-            return new ResponseEntity<>("user ID mismatch", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(
+                    new ServerResponseDTO(
+                            new ServerErrorDTO(
+                                    "404 Not Found",
+                                    "Invalid refresh token",
+                                    "The provided refresh token is invalid. Please provide a valid refresh token or reauthenticate."
+                            ), null
+                    ), HttpStatus.NOT_FOUND
+            );
         }
 
         Long userId = reissueService.getUserIdFromToken(refresh);
