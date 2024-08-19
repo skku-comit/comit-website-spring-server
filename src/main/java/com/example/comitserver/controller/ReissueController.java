@@ -43,6 +43,11 @@ public class ReissueController {
             return new ResponseEntity<>("invalid refresh token", HttpStatus.BAD_REQUEST);
         }
 
+        //현재 로그인된 id와 토큰의 id를 비교
+        if (!reissueService.isUserIdValidForToken(refresh, reissueService.getCurrentUserId())) {
+            return new ResponseEntity<>("user ID mismatch", HttpStatus.BAD_REQUEST);
+        }
+
         Long userId = reissueService.getUserIdFromToken(refresh);
         String newAccess = reissueService.createAccessToken(userId);
         String newRefresh = reissueService.createRefreshToken(userId);

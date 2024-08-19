@@ -1,11 +1,15 @@
 package com.example.comitserver.service;
 
+import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.jwt.JWTUtil;
 import com.example.comitserver.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -75,5 +79,18 @@ public class ReissueService {
         refreshEntity.setExpiration(date.toString());
 
         refreshRepository.save(refreshEntity);
+    }
+
+    public boolean isUserIdValidForToken(String refreshToken, Long userId) {
+        Long tokenUserId = getUserIdFromToken(refreshToken);
+        return tokenUserId.equals(userId);
+    }
+
+    public Long getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails) {
+            return ((CustomUserDetails) userDetails).getUserId();
+        }
+        return null;
     }
 }
