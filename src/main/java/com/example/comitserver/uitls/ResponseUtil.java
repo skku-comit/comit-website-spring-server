@@ -16,7 +16,7 @@ public class ResponseUtil {
 
     // Create error response in controller
     public static ResponseEntity<ServerResponseDTO> createErrorResponse(HttpStatus status, String errorType, String detail) {
-        ServerErrorDTO errorDTO = new ServerErrorDTO(errorType + "/" + status.toString().split(" ")[1], detail);
+        ServerErrorDTO errorDTO = new ServerErrorDTO(errorType, detail);
         ServerResponseDTO responseDTO = new ServerResponseDTO(errorDTO, null);
         return new ResponseEntity<>(responseDTO, status);
     }
@@ -38,7 +38,7 @@ public class ResponseUtil {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("data", null);
         responseBody.put("error", new ServerErrorDTO(
-                errorType + "/" + status.toString().split(" ")[1],
+                errorType,
                 detail
         ));
 

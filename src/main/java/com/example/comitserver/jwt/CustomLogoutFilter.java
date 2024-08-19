@@ -107,6 +107,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        ResponseUtil.writeSuccessResponse(response, null, HttpStatus.NO_CONTENT);
+        ResponseUtil.writeSuccessResponse(response, null, HttpStatus.OK);
     }
 }
