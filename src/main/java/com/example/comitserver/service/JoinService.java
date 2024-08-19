@@ -3,6 +3,7 @@ package com.example.comitserver.service;
 import com.example.comitserver.dto.JoinDTO;
 import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,26 +18,21 @@ public class JoinService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
-    public void joinProcess(JoinDTO joinDTO) {
+    public UserEntity joinProcess(JoinDTO joinDTO) {
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
         String phoneNumber = joinDTO.getPhoneNumber();
         String studentId = joinDTO.getStudentId();
         String email = joinDTO.getEmail();
 
-        // Check if email is already in use
-        if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email already exists");
+        if (userRepository.existsByEmail(joinDTO.getEmail())) {
+            throw new DuplicateResourceException("Email is already in use.");
         }
-
-        // Check if student ID is already in use
-        if (userRepository.existsByStudentId(studentId)) {
-            throw new IllegalArgumentException("Student ID already exists");
+        if (userRepository.existsByStudentId(joinDTO.getStudentId())) {
+            throw new DuplicateResourceException("Student ID is already in use.");
         }
-
-        // Check if phone number is already in use
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new IllegalArgumentException("Phone number already exists");
+        if (userRepository.existsByPhoneNumber(joinDTO.getPhoneNumber())) {
+            throw new DuplicateResourceException("Phone number is already in use.");
         }
 
         UserEntity data = new UserEntity();
@@ -52,5 +48,7 @@ public class JoinService {
         data.setIsStaff(false);
 
         userRepository.save(data);
+
+        return data;
     }
 }
