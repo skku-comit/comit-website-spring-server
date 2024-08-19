@@ -1,10 +1,5 @@
 name: Build and Deploy to Server
 
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +11,7 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
+          distribution: 'temurin' # 설치할 JDK 배포판 (여기서는 Eclipse Temurin)
           java-version: '17'
 
       - name: Create .env file
@@ -26,13 +22,7 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Deploy to Server
-        run: ./deploy.sh
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
+        # 빌드 과정에서 필요한 추가적인 환경 설정이나 명령어가 있다면 여기에 추가
 
   deploy:
     runs-on: ubuntu-latest
@@ -48,5 +38,5 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Deploy Application
-        run: ssh comit@59.11.215.13 'bash -s' < ./deploy.sh
+        run: ssh -o StrictHostKeyChecking=no user@your-server-ip "cd /home/comit && ./deploy.sh"
         # 서버에서 deploy.sh 스크립트를 실행해 배포
