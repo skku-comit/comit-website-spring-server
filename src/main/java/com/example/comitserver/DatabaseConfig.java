@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 @Configuration
 public class DatabaseConfig {
 
+
     @Bean
     public DataSource dataSource() {
         Dotenv dotenv = Dotenv.load();

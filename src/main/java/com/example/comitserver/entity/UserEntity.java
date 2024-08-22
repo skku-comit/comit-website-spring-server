@@ -1,11 +1,17 @@
 package com.example.comitserver.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-public class UserEntity {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class UserEntity extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
