@@ -19,11 +19,6 @@ public class JoinService {
     }
 
     public UserEntity joinProcess(JoinDTO joinDTO) {
-        String username = joinDTO.getUsername();
-        String password = joinDTO.getPassword();
-        String phoneNumber = joinDTO.getPhoneNumber();
-        String studentId = joinDTO.getStudentId();
-        String email = joinDTO.getEmail();
 
         if (userRepository.existsByEmail(joinDTO.getEmail())) {
             throw new DuplicateResourceException("Email is already in use.");
@@ -35,20 +30,18 @@ public class JoinService {
             throw new DuplicateResourceException("Phone number is already in use.");
         }
 
-        UserEntity data = new UserEntity();
+        UserEntity user = UserEntity.builder()
+                .username(joinDTO.getUsername())
+                .password(bCryptPasswordEncoder.encode(joinDTO.getPassword()))
+                .phoneNumber(joinDTO.getPhoneNumber())
+                .studentId(joinDTO.getStudentId())
+                .email(joinDTO.getEmail())
+                .position("일반부원")
+                .isStaff(false)
+                .role(Role.ROLE_MEMBER)
+                .build();
 
-        data.setUsername(username);
-        data.setPassword(bCryptPasswordEncoder.encode(password));
-        data.setPhoneNumber(phoneNumber);
-        data.setStudentId(studentId);
-        data.setEmail(email);
-        data.setRole(Role.ROLE_MEMBER);
-
-        data.setPosition("일반부원");
-        data.setIsStaff(false);
-
-        userRepository.save(data);
-
-        return data;
+        userRepository.save(user);
+        return user;
     }
 }
