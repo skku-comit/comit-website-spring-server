@@ -21,7 +21,7 @@ public class StudyEntity extends BaseTimeEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(nullable = false) // 원래 필드명과 db 열 이름이 같으며 안 적어도 되는데 속성이 있어서 적는 거
     private String title;
@@ -59,7 +59,7 @@ public class StudyEntity extends BaseTimeEntity{
     private String description;
 
     @Column(nullable = false)
-    private boolean isRecruiting;
+    private Boolean isRecruiting;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

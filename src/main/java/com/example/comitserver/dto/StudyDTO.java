@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 public class StudyDTO {
-    private String id;
+    private Long id;
     private String title;
     private String imageSrc;
     private String mentor;
@@ -21,6 +21,6 @@ public class StudyDTO {
     private List<String> stacks;
     private Campus campus;
     private String description;
-    private boolean isRecruiting;
+    private Boolean isRecruiting;
     private Semester semester;
 }
