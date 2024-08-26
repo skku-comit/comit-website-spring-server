@@ -2,7 +2,7 @@ package com.example.comitserver.controller;
 
 import com.example.comitserver.jwt.JWTUtil;
 import com.example.comitserver.service.ReissueService;
-import com.example.comitserver.uitls.ResponseUtil;
+import com.example.comitserver.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;

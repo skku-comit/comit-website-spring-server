@@ -5,7 +5,7 @@ import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
-import com.example.comitserver.uitls.ResponseUtil;
+import com.example.comitserver.utils.ResponseUtil;
 import jakarta.validation.Valid;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
