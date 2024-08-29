@@ -2,11 +2,13 @@ package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
 import com.example.comitserver.dto.ServerResponseDTO;
+import com.example.comitserver.dto.UserDTO;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +19,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class JoinController {
     private final JoinService joinService;
+    private final ModelMapper modelMapper;
 
-    public JoinController(JoinService joinService) {
+    public JoinController(JoinService joinService, ModelMapper modelMapper) {
         this.joinService = joinService;
+        this.modelMapper = modelMapper;
     }
 
     @PostMapping("/join")
     public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
-        return ResponseUtil.createSuccessResponse(createdUser, HttpStatus.CREATED);
+        UserDTO userDTO = modelMapper.map(createdUser, UserDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.CREATED);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
