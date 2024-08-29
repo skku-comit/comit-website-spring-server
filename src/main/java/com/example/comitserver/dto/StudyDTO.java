@@ -13,7 +13,8 @@ public class StudyDTO {
     private Long id;
     private String title;
     private String imageSrc;
-    private String mentor;
+    private String mentorName;
+    private Long mentorId;
     private Day day;
     private String startTime;
     private String endTime;
