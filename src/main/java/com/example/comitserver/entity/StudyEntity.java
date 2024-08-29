@@ -29,8 +29,9 @@ public class StudyEntity extends BaseTimeEntity{
     @Column(nullable = false)
     private String imageSrc;
 
-    @Column(nullable = false) // ❓member 전체를 불러와야할지 그냥 이름만 string으로 불러오면 될지 추후에 다시 보자.
-    private String mentor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity mentor;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

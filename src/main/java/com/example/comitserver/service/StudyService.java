@@ -3,20 +3,23 @@ package com.example.comitserver.service;
 import com.example.comitserver.dto.StudyDTO;
 import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.repository.StudyRepository;
+import com.example.comitserver.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 
-//@Service
+@Service
 @Transactional
 public class StudyService {
 
     private final StudyRepository studyRepository;
+    private final UserRepository userRepository;
 
-    public StudyService(StudyRepository studyRepository) {
+    public StudyService(StudyRepository studyRepository, UserRepository userRepository) {
         this.studyRepository = studyRepository;
+        this.userRepository = userRepository;
     }
 
     public List<StudyEntity> showAllStudies() {
@@ -33,7 +36,7 @@ public class StudyService {
 
         newStudy.setTitle(studyDTO.getTitle());
         newStudy.setImageSrc(studyDTO.getImageSrc());
-        newStudy.setMentor(studyDTO.getMentor());
+        newStudy.setMentor(userRepository.findById(studyDTO.getMentorId()).orElseThrow(()-> new NoSuchElementException("User not found with id: " + studyDTO.getMentorId())));
         newStudy.setDay(studyDTO.getDay());
         newStudy.setStartTime(studyDTO.getStartTime());
         newStudy.setEndTime(studyDTO.getEndTime());

@@ -4,6 +4,7 @@ import com.example.comitserver.dto.StudyDTO;
 import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.service.StudyService;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class StudyController {
     }
 
     @GetMapping("/studies/{id}")
-    public ResponseEntity<StudyDTO> getStudy(@PathVariable Long id) {
+    public ResponseEntity<StudyDTO> getStudyById(@PathVariable Long id) {
         StudyEntity study = studyService.showStudy(id);
 
         return ResponseEntity.ok(modelMapper.map(study, StudyDTO.class));
