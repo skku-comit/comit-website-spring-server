@@ -1,7 +1,7 @@
 package com.example.comitserver.jwt;
 
 import com.example.comitserver.repository.RefreshRepository;
-import com.example.comitserver.uitls.ResponseUtil;
+import com.example.comitserver.utils.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
