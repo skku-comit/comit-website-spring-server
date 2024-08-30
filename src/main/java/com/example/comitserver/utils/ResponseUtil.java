@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,14 @@ public class ResponseUtil {
     public static ResponseEntity<ServerResponseDTO> createSuccessResponse(Object data, HttpStatus status) {
         ServerResponseDTO responseDTO = new ServerResponseDTO(null, data);
         return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // Create success response in controller with Location header
+    public static ResponseEntity<ServerResponseDTO> createSuccessResponse(Object data, HttpStatus status, URI location) {
+        ServerResponseDTO responseDTO = new ServerResponseDTO(null, data);
+        return ResponseEntity.status(status)
+                .location(location)
+                .body(responseDTO);
     }
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -56,6 +65,24 @@ public class ResponseUtil {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("data", data);
         responseBody.put("error", null);
+
+        try (PrintWriter out = response.getWriter()) {
+            out.write(objectMapper.writeValueAsString(responseBody));
+        }
+    }
+
+    // Write success response in filter with Location header
+    public static void writeSuccessResponse(HttpServletResponse response, Object data, HttpStatus status, URI location) throws IOException {
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("data", data);
+        responseBody.put("error", null);
+
+        // Add Location header
+        response.setHeader("Location", location.toString());
 
         try (PrintWriter out = response.getWriter()) {
             out.write(objectMapper.writeValueAsString(responseBody));
