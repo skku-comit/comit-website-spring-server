@@ -6,7 +6,7 @@ import com.example.comitserver.jwt.JWTUtil;
 import com.example.comitserver.jwt.LoginFilter;
 import com.example.comitserver.repository.RefreshRepository;
 import com.example.comitserver.service.CustomUserDetailsService;
-import com.example.comitserver.uitls.CustomAccessDeniedHandler;
+import com.example.comitserver.utils.CustomAccessDeniedHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

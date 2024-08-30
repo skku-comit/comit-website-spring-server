@@ -1,4 +1,4 @@
-package com.example.comitserver.uitls;
+package com.example.comitserver.utils;
 
 import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.exception.DuplicateResourceException;

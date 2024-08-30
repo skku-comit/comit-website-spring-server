@@ -1,7 +1,7 @@
 package com.example.comitserver.jwt;
 
 import com.example.comitserver.service.CustomUserDetailsService;
-import com.example.comitserver.uitls.ResponseUtil;
+import com.example.comitserver.utils.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
