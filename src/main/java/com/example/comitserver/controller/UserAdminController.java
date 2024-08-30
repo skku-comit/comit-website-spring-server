@@ -19,9 +19,18 @@ public class UserAdminController {
     }
 
     @GetMapping("/users")
-    public List<UserEntity> getAllUsers() {
+    public List<UserEntity> getAllUsers(@RequestParam(required = false) Boolean isStaff,
+                                        @RequestParam(required = false) Role role) {
+        if (isStaff != null && role != null) {
+            return userAdminService.getUsersByRoleAndIsStaff(role, isStaff);
+        } else if (isStaff != null) {
+            return userAdminService.getUsersByIsStaff(isStaff);
+        } else if (role != null) {
+            return userAdminService.getUsersByRole(role);
+        }
         return userAdminService.getAllUsers();
     }
+
 
     @GetMapping("/users/{id}")
     public UserEntity getUserById(@PathVariable Long id) {
@@ -30,13 +39,26 @@ public class UserAdminController {
 
     @PatchMapping("/users/{id}/role")
     public void updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
-        Role role = Role.valueOf(requestBody.get("role"));
-        userAdminService.updateUserRole(id, role);
+        try {
+            Role role = Role.valueOf(requestBody.get("role"));
+            userAdminService.updateUserRole(id, role);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid role value provided: " + requestBody.get("role"));
+        }
     }
 
     @PatchMapping("/users/{id}/isStaff")
     public void updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
-        Boolean isStaff = requestBody.get("isStaff");
-        userAdminService.updateUserIsStaff(id, isStaff);
+        try {
+            Boolean isStaff = requestBody.get("isStaff");
+
+            if (isStaff == null) {
+                throw new IllegalArgumentException("isStaff value must be provided and must be either true or false.");
+            }
+
+            userAdminService.updateUserIsStaff(id, isStaff);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid isStaff value provided: " + requestBody.get("isStaff"));
+        }
     }
 }

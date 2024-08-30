@@ -1,11 +1,14 @@
 package com.example.comitserver.jwt;
 
 import com.example.comitserver.service.CustomUserDetailsService;
+import com.example.comitserver.utils.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -39,29 +42,31 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access token expired");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Access token expired");
+            return;
+        } catch (JwtException e) {
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid JWT token");
             return;
         }
 
         // 토큰이 access인지 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
         if (!category.equals("access")) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid access token");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid access token");
             return;
         }
 
         Long userId = jwtUtil.getUserId(accessToken);
 
         if (userId == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User ID not found in token");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "User ID not found in token");
             return;
         }
-
 
         UserDetails userDetails = customUserDetailsService.loadUserById(userId);
 
         if (userDetails == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "User not found");
             return;
         }
 

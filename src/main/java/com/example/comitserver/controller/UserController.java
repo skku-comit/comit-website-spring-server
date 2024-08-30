@@ -4,6 +4,7 @@ import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.UserDTO;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,11 +24,13 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<UserEntity> getAllStaffProfiles(@RequestParam(required = false) Boolean isStaff) {
+    public List<UserEntity> getAllStaffProfiles(@RequestParam(required = false) Boolean isStaff,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
         if (isStaff != null) {
             return userService.getAllUsersByStaffStatus(isStaff);
         }
-        return List.of(userService.getCurrentUserProfile());
+        Long userId = ((CustomUserDetails) userDetails).getUserId();
+        return List.of(userService.getCurrentUserProfile(userId));
     }
 
     @GetMapping("/users/profile")
@@ -36,8 +39,9 @@ public class UserController {
         return userService.getUserProfile(userId);
     }
 
-    @PutMapping("/users/profile")
-    public void updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody UserDTO userDTO) {
+    // put->patch 변경
+    @PatchMapping("/users/profile")
+    public void updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.updateUserProfile(userId, userDTO);
     }

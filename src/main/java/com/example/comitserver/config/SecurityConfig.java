@@ -6,6 +6,7 @@ import com.example.comitserver.jwt.JWTUtil;
 import com.example.comitserver.jwt.LoginFilter;
 import com.example.comitserver.repository.RefreshRepository;
 import com.example.comitserver.service.CustomUserDetailsService;
+import com.example.comitserver.utils.CustomAccessDeniedHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,11 +31,14 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
+
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository, CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
@@ -82,9 +86,16 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 // /admin 외의 POST 요청은 VERIFIED와 ADMIN만 접근 가능
                 .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("ADMIN", "VERIFIED")
+                // /admin 외의 PATCH 요청은 모두 접근 가능
+//                .requestMatchers(HttpMethod.PATCH, "/api/**").hasAnyRole("MEMBER", "VERIFIED", "ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/**").permitAll()
                 // 나머지 요청은 인증된 사용자만 접근 가능
                 .anyRequest().authenticated()
-        );
+                )
+                // spring sercurity 기본 접근권한 에러 커스텀
+                .exceptionHandling(exception -> exception
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                );
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class)
