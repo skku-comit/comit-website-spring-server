@@ -44,18 +44,18 @@ public class StudyController {
         return ResponseEntity.ok(modelMapper.map(study, StudyResponseDTO.class));
     }
 
-//    @PostMapping("/studies")
-//    public ResponseEntity<StudyResponseDTO> postStudy(@RequestBody StudyRequestDTO studyRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-//        StudyEntity newStudy = studyService.createStudy(studyRequestDTO, customUserDetails);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentRequest()
-//                .path("/{id}")
-//                .buildAndExpand(newStudy.getId())
-//                .toUri();
-//
-//        return ResponseEntity.created(location).body(modelMapper.map(newStudy, StudyResponseDTO.class));
-//    }
+    @PostMapping("/studies")
+    public ResponseEntity<StudyResponseDTO> postStudy(@RequestBody StudyRequestDTO studyRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        StudyEntity newStudy = studyService.createStudy(studyRequestDTO, customUserDetails);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newStudy.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(modelMapper.map(newStudy, StudyResponseDTO.class));
+    }
 
     @PutMapping("/studies/{id}")
     public ResponseEntity<StudyResponseDTO> putStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO) {
