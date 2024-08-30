@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api")
@@ -30,7 +33,14 @@ public class JoinController {
     public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
         UserDTO userDTO = modelMapper.map(createdUser, UserDTO.class);
-        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.CREATED);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/api/users/{id}")
+                .buildAndExpand(createdUser.getId())
+                .toUri();
+
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.CREATED, location);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
