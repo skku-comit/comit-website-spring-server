@@ -4,9 +4,11 @@ import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.dto.StudyResponseDTO;
 import com.example.comitserver.entity.StudyEntity;
+import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.service.StudyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -58,24 +60,30 @@ public class StudyController {
     }
 
     @PutMapping("/studies/{id}")
-    public ResponseEntity<StudyResponseDTO> putStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO) {
-        StudyEntity updatedStudy = studyService.updateStudy(id, studyRequestDTO);
+    public ResponseEntity<StudyResponseDTO> putStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if (studyService.identification(id, customUserDetails)) {
+            StudyEntity updatedStudy = studyService.updateStudy(id, studyRequestDTO);
 
-        if (updatedStudy == null) {
-            return ResponseEntity.notFound().build();
+            if (updatedStudy == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(modelMapper.map(updatedStudy, StudyResponseDTO.class));
         }
-
-        return ResponseEntity.ok(modelMapper.map(updatedStudy, StudyResponseDTO.class));
+        else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @DeleteMapping("/studies/{id}")
-    public ResponseEntity<StudyResponseDTO> deleteStudy(@PathVariable Long id) {
-        StudyEntity deletedStudy = studyService.showStudy(id);
-        StudyResponseDTO studyResponseDTO = modelMapper.map(deletedStudy, StudyResponseDTO.class);
+    public ResponseEntity<StudyResponseDTO> deleteStudy(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if(studyService.identification(id, customUserDetails)) {
+            StudyEntity deletedStudy = studyService.showStudy(id);
+            StudyResponseDTO studyResponseDTO = modelMapper.map(deletedStudy, StudyResponseDTO.class);
 
-        studyService.deleteStudy(id);
+            studyService.deleteStudy(id);
 
-        return ResponseEntity.ok(studyResponseDTO);
+            return ResponseEntity.ok(studyResponseDTO);
+        }
+        else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 }
