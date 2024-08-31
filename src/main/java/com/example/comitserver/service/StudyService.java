@@ -2,7 +2,6 @@ package com.example.comitserver.service;
 
 import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
-import com.example.comitserver.dto.StudyResponseDTO;
 import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.repository.UserRepository;

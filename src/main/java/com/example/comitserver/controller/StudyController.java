@@ -71,10 +71,11 @@ public class StudyController {
     @DeleteMapping("/studies/{id}")
     public ResponseEntity<StudyResponseDTO> deleteStudy(@PathVariable Long id) {
         StudyEntity deletedStudy = studyService.showStudy(id);
+        StudyResponseDTO studyResponseDTO = modelMapper.map(deletedStudy, StudyResponseDTO.class);
 
         studyService.deleteStudy(id);
 
-        return ResponseEntity.ok(modelMapper.map(deletedStudy, StudyResponseDTO.class));
+        return ResponseEntity.ok(studyResponseDTO);
     }
 
 }
