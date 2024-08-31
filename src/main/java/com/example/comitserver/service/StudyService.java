@@ -3,6 +3,7 @@ package com.example.comitserver.service;
 import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.entity.StudyEntity;
+import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -76,5 +78,12 @@ public class StudyService {
     public void deleteStudy(Long id) {
         StudyEntity deletingStudy = showStudy(id);
         studyRepository.delete(deletingStudy);
+    }
+
+    public Boolean identification(Long id, CustomUserDetails customUserDetails) {
+        StudyEntity study = showStudy(id);
+        Long mentorId = study.getMentor().getId();
+        Long requesterId = customUserDetails.getUserId();
+        return Objects.equals(requesterId, mentorId);
     }
 }
