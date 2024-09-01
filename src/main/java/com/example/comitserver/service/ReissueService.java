@@ -58,11 +58,13 @@ public class ReissueService {
     }
 
     public String createAccessToken(Long userId) {
-        return jwtUtil.createJwt("access", userId, 1800000L);
+//        return jwtUtil.createJwt("access", userId, 1800000L);
+        return jwtUtil.createJwt("access", userId, 120000L);
     }
 
     public String createRefreshToken(Long userId) {
-        return jwtUtil.createJwt("refresh", userId, 1209600000L);
+//        return jwtUtil.createJwt("refresh", userId, 1209600000L);
+        return jwtUtil.createJwt("refresh", userId, 240000L);
     }
 
     public void updateRefreshTokenInDatabase(Long userId, String oldRefreshToken, String newRefreshToken) {
@@ -71,7 +73,8 @@ public class ReissueService {
     }
 
     private void addRefreshEntity(Long userId, String refresh) {
-        Date date = new Date(System.currentTimeMillis() + 1209600000L);
+//        Date date = new Date(System.currentTimeMillis() + 1209600000L);
+        Date date = new Date(System.currentTimeMillis() + 240000L);
 
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUserId(userId);

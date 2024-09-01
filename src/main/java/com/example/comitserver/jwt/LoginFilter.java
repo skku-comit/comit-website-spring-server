@@ -62,8 +62,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Long userId = userDetails.getUserId();
         String username = userDetails.getUsername();
 
-        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
-        String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
+//        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
+//        String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
+
+        String accessToken = jwtUtil.createJwt("access", userId, 120000L);
+        String refreshToken = jwtUtil.createJwt("refresh", userId, 240000L);
 
         addRefreshEntity(userId, refreshToken);
 
@@ -101,7 +104,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     private void addRefreshEntity(Long userId, String refresh) {
-        Date date = new Date(System.currentTimeMillis() + 1209600000L);
+        Date date = new Date(System.currentTimeMillis() + 240000L);
+//        Date date = new Date(System.currentTimeMillis() + 1209600000L);
 
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUserId(userId);
