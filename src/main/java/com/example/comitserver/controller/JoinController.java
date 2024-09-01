@@ -7,6 +7,7 @@ import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
 import com.example.comitserver.utils.ResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -30,7 +31,7 @@ public class JoinController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
+    public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO, HttpServletRequest request) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
         UserDTO userDTO = modelMapper.map(createdUser, UserDTO.class);
 
@@ -44,26 +45,43 @@ public class JoinController {
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex) {
+    public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex, HttpServletRequest request) {
+        String endpoint = extractEndpoint(request.getRequestURI());
         return ResponseUtil.createErrorResponse(
                 HttpStatus.CONFLICT,
-                "Join/DuplicateResource",
+                endpoint + "/duplicate_resource",
                 ex.getMessage()
         );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ServerResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ServerResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String errorMessage = ex.getBindingResult().getAllErrors().stream()
                 .findFirst()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Validation error");
 
+        String endpoint = extractEndpoint(request.getRequestURI());
+
         return ResponseUtil.createErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                "Join/ValidationFailed",
+                endpoint + "/validation_failed",
                 errorMessage
         );
+    }
+
+    // WebRequest에서 엔드포인트 정보를 추출하는 메서드
+    private String extractEndpoint(String uri) {
+        // "api/"로 시작하면 이를 제거
+        if (uri.startsWith("/api/")) {
+            uri = uri.substring(5); // "api/"를 제거
+        }
+
+        // Path Variable 부분 제거
+        uri = uri.replaceAll("/\\d+", "")  // 숫자로 된 ID 제거
+                .replaceAll("/\\{[^/]+\\}", ""); // {}로 감싸진 Path Variable 제거
+
+        return uri;
     }
 }

@@ -62,8 +62,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Long userId = userDetails.getUserId();
         String username = userDetails.getUsername();
 
-        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
-        String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
+//        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
+//        String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
+        String accessToken = jwtUtil.createJwt("access", userId, 120000L); // 2min
+        String refreshToken = jwtUtil.createJwt("refresh", userId, 240000L); // 4min
 
         addRefreshEntity(userId, refreshToken);
 
@@ -79,25 +81,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        Map<String, Object> responseBody = new HashMap<>();
+        String endpoint = extractEndpoint(request.getRequestURI());
 
         if (failed instanceof BadCredentialsException) {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.UNAUTHORIZED,
-                    "Login/InvalidFormat",
+                    endpoint + "/invalid_credentials",
                     "Invalid email or password."
             );
         } else {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
-                    "Login/AuthenticationFailed",
+                    endpoint + "/authentication_failed",
                     "An unknown error occurred. Please check your request and try again later."
             );
         }
-
-        objectMapper.writeValue(response.getWriter(), responseBody);
     }
 
     private void addRefreshEntity(Long userId, String refresh) {
@@ -109,5 +109,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         refreshEntity.setExpiration(date.toString());
 
         refreshRepository.save(refreshEntity);
+    }
+
+    // 엔드포인트 정보를 추출하는 메서드
+    private String extractEndpoint(String uri) {
+        if (uri.startsWith("/api/")) {
+            uri = uri.substring(5); // "api/"를 제거
+        }
+
+        // Path Variable 부분 제거
+        uri = uri.replaceAll("/\\d+", "")  // 숫자로 된 ID 제거
+                .replaceAll("/\\{[^/]+\\}", ""); // {}로 감싸진 Path Variable 제거
+
+        return uri;
     }
 }

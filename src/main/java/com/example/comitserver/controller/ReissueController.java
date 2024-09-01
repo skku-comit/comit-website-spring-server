@@ -23,12 +23,14 @@ public class ReissueController {
 
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+        String endpoint = extractEndpoint(request.getRequestURI());
+
         String refresh = reissueService.getRefreshTokenFromCookies(request);
 
         if (refresh == null) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.BAD_REQUEST,
-                    "Reissue/TokenMissing",
+                    endpoint + "/token_missing",
                     "The request is missing the required refresh token. Please include a valid refresh token in cookie."
             );
         }
@@ -36,7 +38,7 @@ public class ReissueController {
         if (reissueService.isTokenExpired(refresh)) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.UNAUTHORIZED,
-                    "Reissue/TokenExpired",
+                    endpoint + "/token_expired",
                     "The provided refresh token has expired. Please request a new token or reauthenticate."
             );
         }
@@ -44,7 +46,7 @@ public class ReissueController {
         if (!reissueService.isValidRefreshToken(refresh)) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.UNAUTHORIZED,
-                    "Reissue/InvalidToken",
+                    endpoint + "/invalid_token",
                     "The provided refresh token is invalid. Please provide a valid refresh token or reauthenticate."
             );
         }
@@ -52,7 +54,7 @@ public class ReissueController {
         if (!reissueService.existsInDatabase(refresh)) {
             return ResponseUtil.createErrorResponse(
                     HttpStatus.NOT_FOUND,
-                    "Reissue/TokenNotFound",
+                    endpoint + "/token_not_found",
                     "The provided refresh token is invalid. Please provide a valid refresh token or reauthenticate."
             );
         }
@@ -67,5 +69,19 @@ public class ReissueController {
         response.addCookie(JWTUtil.createCookie("refresh", newRefresh));
 
         return ResponseUtil.createSuccessResponse(null, HttpStatus.CREATED);
+    }
+
+    // WebRequest에서 엔드포인트 정보를 추출하는 메서드
+    private String extractEndpoint(String uri) {
+        // "api/"로 시작하면 이를 제거
+        if (uri.startsWith("/api/")) {
+            uri = uri.substring(5); // "api/"를 제거
+        }
+
+        // Path Variable 부분 제거
+        uri = uri.replaceAll("/\\d+", "")  // 숫자로 된 ID 제거
+                .replaceAll("/\\{[^/]+\\}", ""); // {}로 감싸진 Path Variable 제거
+
+        return uri;
     }
 }

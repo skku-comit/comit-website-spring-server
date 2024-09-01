@@ -3,6 +3,9 @@ package com.example.comitserver.controller;
 import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.service.UserAdminService;
+import com.example.comitserver.utils.ResponseUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,46 +22,53 @@ public class UserAdminController {
     }
 
     @GetMapping("/users")
-    public List<UserEntity> getAllUsers(@RequestParam(required = false) Boolean isStaff,
-                                        @RequestParam(required = false) Role role) {
+    public ResponseEntity<?> getAllUsers(@RequestParam(required = false) Boolean isStaff,
+                                         @RequestParam(required = false) Role role) {
+        List<UserEntity> users;
+
         if (isStaff != null && role != null) {
-            return userAdminService.getUsersByRoleAndIsStaff(role, isStaff);
+            users = userAdminService.getUsersByRoleAndIsStaff(role, isStaff);
         } else if (isStaff != null) {
-            return userAdminService.getUsersByIsStaff(isStaff);
+            users = userAdminService.getUsersByIsStaff(isStaff);
         } else if (role != null) {
-            return userAdminService.getUsersByRole(role);
+            users = userAdminService.getUsersByRole(role);
+        } else {
+            users = userAdminService.getAllUsers();
         }
-        return userAdminService.getAllUsers();
+
+        return ResponseUtil.createSuccessResponse(users, HttpStatus.OK);
     }
 
-
     @GetMapping("/users/{id}")
-    public UserEntity getUserById(@PathVariable Long id) {
-        return userAdminService.getUserById(id);
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        UserEntity user = userAdminService.getUserById(id);
+        return ResponseUtil.createSuccessResponse(user, HttpStatus.OK);
     }
 
     @PatchMapping("/users/{id}/role")
-    public void updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+    public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
         try {
             Role role = Role.valueOf(requestBody.get("role"));
             userAdminService.updateUserRole(id, role);
+            return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid role value provided: " + requestBody.get("role"));
+            return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid Role", "Invalid role value provided: " + requestBody.get("role"));
         }
     }
 
     @PatchMapping("/users/{id}/isStaff")
-    public void updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
+    public ResponseEntity<?> updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
         try {
             Boolean isStaff = requestBody.get("isStaff");
 
             if (isStaff == null) {
-                throw new IllegalArgumentException("isStaff value must be provided and must be either true or false.");
+                return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid isStaff", "isStaff value must be provided and must be either true or false.");
             }
 
             userAdminService.updateUserIsStaff(id, isStaff);
+            return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid isStaff value provided: " + requestBody.get("isStaff"));
+            return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid isStaff", "Invalid isStaff value provided: " + requestBody.get("isStaff"));
         }
     }
 }
