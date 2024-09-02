@@ -4,7 +4,6 @@ import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.UserDTO;
 import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.entity.UserEntity;
-import com.example.comitserver.service.StudyService;
 import com.example.comitserver.service.UserService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -28,19 +27,13 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<?> getAllStaffProfiles(@RequestParam(required = false) Boolean isStaff,
-                                                 @AuthenticationPrincipal UserDetails userDetails) {
-        if (isStaff != null) {
-            List<UserEntity> users = userService.getAllUsersByStaffStatus(isStaff);
-            return ResponseUtil.createSuccessResponse(users, HttpStatus.OK);
-        }
-        Long userId = ((CustomUserDetails) userDetails).getUserId();
-        UserEntity userProfile = userService.getCurrentUserProfile(userId);
-        return ResponseUtil.createSuccessResponse(userProfile, HttpStatus.OK);
+    @GetMapping("/staffs")
+    public ResponseEntity<?> getAllStaffProfiles() {
+        List<UserEntity> users = userService.getAllUsersByStaffStatus(true);
+        return ResponseUtil.createSuccessResponse(users, HttpStatus.OK);
     }
 
-    @GetMapping("/users/profile")
+    @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         UserEntity userProfile = userService.getUserProfile(userId);
@@ -48,7 +41,7 @@ public class UserController {
     }
 
     // 업데이트 후 사용자 정보를 반환(200) or 반환하지 않은(204) 중 선택 가능
-    @PatchMapping("/users/profile")
+    @PatchMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.updateUserProfile(userId, userDTO);
@@ -56,21 +49,21 @@ public class UserController {
         UserEntity updatedProfile = userService.getUserProfile(userId);
         return ResponseUtil.createSuccessResponse(updatedProfile, HttpStatus.OK);
     }
-//    @PatchMapping("/users/profile")
+//    @PatchMapping("/profile")
 //    public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserDTO userDTO) {
 //        Long userId = ((CustomUserDetails) userDetails).getUserId();
 //        userService.updateUserProfile(userId, userDTO);
 //        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
 //    }
 
-    @DeleteMapping("/users/profile")
+    @DeleteMapping("/profile")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.deleteUser(userId);
         return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/users/studies-created")
+    @GetMapping("/profile/studies-created")
     public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
