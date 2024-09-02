@@ -55,7 +55,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
 
         // Handle missing refresh token
         if (refresh == null) {
-            ResponseUtil.writeErrorResponse(
+            ResponseUtil.createFilterErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
                     "Logout/TokenMissing",
@@ -68,7 +68,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
-            ResponseUtil.writeErrorResponse(
+            ResponseUtil.createFilterErrorResponse(
                     response,
                     HttpStatus.UNAUTHORIZED,
                     "Logout/TokenExpired",
@@ -80,7 +80,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         // Validate token category
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals("refresh")) {
-            ResponseUtil.writeErrorResponse(
+            ResponseUtil.createFilterErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
                     "Logout/InvalidToken",
@@ -92,7 +92,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         // Check if token exists in the database
         Boolean isExist = refreshRepository.existsByRefresh(refresh);
         if (!isExist) {
-            ResponseUtil.writeErrorResponse(
+            ResponseUtil.createFilterErrorResponse(
                     response,
                     HttpStatus.NOT_FOUND,
                     "Logout/TokenNotFound",
@@ -107,6 +107,6 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        ResponseUtil.writeSuccessResponse(response, null, HttpStatus.OK);
+        ResponseUtil.createFilterSuccessResponse(response, null, HttpStatus.OK);
     }
 }
