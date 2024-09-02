@@ -54,7 +54,6 @@ public class UserAdminService {
         userRepository.save(user);
     }
 
-    @Transactional
     public boolean deleteUserById(Long id) {
         if (userRepository.existsById(Math.toIntExact(id))) {
             userRepository.deleteById(Math.toIntExact(id));
