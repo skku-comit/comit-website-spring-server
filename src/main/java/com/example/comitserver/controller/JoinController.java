@@ -2,7 +2,7 @@ package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
 import com.example.comitserver.dto.ServerResponseDTO;
-import com.example.comitserver.dto.UserDTO;
+import com.example.comitserver.dto.UserResponseDTO;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
@@ -33,7 +33,7 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO, HttpServletRequest request) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
-        UserDTO userDTO = modelMapper.map(createdUser, UserDTO.class);
+        UserResponseDTO userDTO = modelMapper.map(createdUser, UserResponseDTO.class);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()

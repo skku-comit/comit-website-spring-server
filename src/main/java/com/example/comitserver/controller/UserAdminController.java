@@ -1,9 +1,11 @@
 package com.example.comitserver.controller;
 
+import com.example.comitserver.dto.AdminUserResponseDTO;
 import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.service.UserAdminService;
 import com.example.comitserver.utils.ResponseUtil;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +18,11 @@ import java.util.Map;
 public class UserAdminController {
 
     private final UserAdminService userAdminService;
+    private final ModelMapper modelMapper;
 
-    public UserAdminController(UserAdminService userAdminService) {
+    public UserAdminController(UserAdminService userAdminService, ModelMapper modelMapper) {
         this.userAdminService = userAdminService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/users")
@@ -36,13 +40,16 @@ public class UserAdminController {
             users = userAdminService.getAllUsers();
         }
 
-        return ResponseUtil.createSuccessResponse(users, HttpStatus.OK);
+        List<AdminUserResponseDTO> userDTOs = users.stream().map(entity -> modelMapper.map(entity, AdminUserResponseDTO.class)).toList();
+
+        return ResponseUtil.createSuccessResponse(userDTOs, HttpStatus.OK);
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Long id) {
         UserEntity user = userAdminService.getUserById(id);
-        return ResponseUtil.createSuccessResponse(user, HttpStatus.OK);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/users/{id}/role")

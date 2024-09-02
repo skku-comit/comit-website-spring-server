@@ -4,6 +4,7 @@ import com.example.comitserver.entity.enumeration.Campus;
 import com.example.comitserver.entity.enumeration.Day;
 import com.example.comitserver.entity.enumeration.Level;
 import com.example.comitserver.entity.enumeration.Semester;
+import com.example.comitserver.utils.StringListConverter;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,9 +48,7 @@ public class StudyEntity extends BaseTimeEntity{
     @Column(nullable = false)
     private Level level;
 
-    @ElementCollection // 배열은 애초에 안 되고 list나 set은 이렇게 따로 collection을 만들어서 관계형으로 설정해야함
-    @CollectionTable(name="study_stacks", joinColumns = @JoinColumn(name="study_id"))
-    @Column(name="stack", nullable = false)
+    @Convert(converter = StringListConverter.class)
     private List<String> stacks;
 
     @Enumerated(EnumType.STRING)

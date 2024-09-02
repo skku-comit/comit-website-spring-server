@@ -1,6 +1,6 @@
 package com.example.comitserver.service;
 
-import com.example.comitserver.dto.UserDTO;
+import com.example.comitserver.dto.UserRequestDTO;
 import com.example.comitserver.entity.CreatedStudyEntity;
 import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.entity.UserEntity;
@@ -33,17 +33,12 @@ public class UserService {
         return userRepository.findByIsStaff(isStaff);
     }
 
-    public UserEntity getCurrentUserProfile(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
-    }
-
     public UserEntity getUserProfile(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
 
-    public void updateUserProfile(Long userId, @Valid UserDTO userDTO) {
+    public void updateUserProfile(Long userId, @Valid UserRequestDTO userDTO) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
@@ -54,7 +49,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    private void checkForDuplicateFields(UserDTO userDTO, UserEntity user) {
+    private void checkForDuplicateFields(UserRequestDTO userDTO, UserEntity user) {
         if (userDTO.getEmail() != null && !userDTO.getEmail().equals(user.getEmail()) &&
                 userRepository.existsByEmail(userDTO.getEmail())) {
             throw new DuplicateResourceException("Email is already in use.");
@@ -71,7 +66,7 @@ public class UserService {
         }
     }
 
-    private void updateUserFields(UserEntity user, UserDTO userDTO) {
+    private void updateUserFields(UserEntity user, UserRequestDTO userDTO) {
         if (userDTO.getPhoneNumber() != null) {
             user.setPhoneNumber(userDTO.getPhoneNumber());
         }

@@ -14,7 +14,7 @@ public class StudyResponseDTO {
     private Long id;
     private String title;
     private String imageSrc;
-    private UserEntity mentor;
+    private UserResponseDTO mentor;
     private Day day;
     private String startTime;
     private String endTime;
