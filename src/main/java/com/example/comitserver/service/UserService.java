@@ -1,9 +1,12 @@
 package com.example.comitserver.service;
 
 import com.example.comitserver.dto.UserDTO;
+import com.example.comitserver.entity.CreatedStudyEntity;
+import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.exception.ResourceNotFoundException;
+import com.example.comitserver.repository.CreatedStudyRepository;
 import com.example.comitserver.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,15 +14,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CreatedStudyRepository createdStudyRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CreatedStudyRepository createdStudyRepository) {
         this.userRepository = userRepository;
+        this.createdStudyRepository = createdStudyRepository;
     }
 
     public List<UserEntity> getAllUsersByStaffStatus(Boolean isStaff) {
@@ -93,5 +100,17 @@ public class UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
 
         userRepository.delete(user);
+    }
+
+    public List<StudyEntity> getCreatedStudies(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + userId));
+
+        List<CreatedStudyEntity> createdStudies = createdStudyRepository.findByUser(user);
+
+        // Extract and return the list of StudyEntity objects from CreatedStudyEntity
+        return createdStudies.stream()
+                .map(CreatedStudyEntity::getStudy)
+                .collect(Collectors.toList());
     }
 }
