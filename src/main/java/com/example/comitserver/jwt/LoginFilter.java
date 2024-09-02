@@ -82,7 +82,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        String endpoint = extractEndpoint(request.getRequestURI());
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
 
         if (failed instanceof BadCredentialsException) {
             ResponseUtil.writeErrorResponse(
@@ -111,18 +111,5 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         refreshEntity.setExpiration(date.toString());
 
         refreshRepository.save(refreshEntity);
-    }
-
-    // 엔드포인트 정보를 추출하는 메서드
-    private String extractEndpoint(String uri) {
-        if (uri.startsWith("/api/")) {
-            uri = uri.substring(5); // "api/"를 제거
-        }
-
-        // Path Variable 부분 제거
-        uri = uri.replaceAll("/\\d+", "")  // 숫자로 된 ID 제거
-                .replaceAll("/\\{[^/]+\\}", ""); // {}로 감싸진 Path Variable 제거
-
-        return uri;
     }
 }

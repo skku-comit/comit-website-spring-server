@@ -39,7 +39,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String accessToken = authorizationHeader.substring(7);
 
         // URI에서 엔드포인트 추출
-        String endpoint = extractEndpoint(request.getRequestURI());
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
 
         // 토큰 만료 여부 확인, 만료 시 다음 필터로 넘기지 않음
         try {
@@ -77,19 +77,5 @@ public class JWTFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
-    }
-
-    // WebRequest에서 엔드포인트 정보를 추출하는 메서드
-    private String extractEndpoint(String uri) {
-        // "api/"로 시작하면 이를 제거
-        if (uri.startsWith("/api/")) {
-            uri = uri.substring(5); // "api/"를 제거
-        }
-
-        // Path Variable 부분 제거
-        uri = uri.replaceAll("/\\d+", "")  // 숫자로 된 ID 제거
-                .replaceAll("/\\{[^/]+\\}", ""); // {}로 감싸진 Path Variable 제거
-
-        return uri;
     }
 }

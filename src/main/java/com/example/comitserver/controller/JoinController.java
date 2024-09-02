@@ -46,7 +46,7 @@ public class JoinController {
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex, HttpServletRequest request) {
-        String endpoint = extractEndpoint(request.getRequestURI());
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
         return ResponseUtil.createErrorResponse(
                 HttpStatus.CONFLICT,
                 endpoint + "/duplicate_resource",
@@ -62,26 +62,12 @@ public class JoinController {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Validation error");
 
-        String endpoint = extractEndpoint(request.getRequestURI());
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
 
         return ResponseUtil.createErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 endpoint + "/validation_failed",
                 errorMessage
         );
-    }
-
-    // WebRequest에서 엔드포인트 정보를 추출하는 메서드
-    private String extractEndpoint(String uri) {
-        // "api/"로 시작하면 이를 제거
-        if (uri.startsWith("/api/")) {
-            uri = uri.substring(5); // "api/"를 제거
-        }
-
-        // Path Variable 부분 제거
-        uri = uri.replaceAll("/\\d+", "")  // 숫자로 된 ID 제거
-                .replaceAll("/\\{[^/]+\\}", ""); // {}로 감싸진 Path Variable 제거
-
-        return uri;
     }
 }
