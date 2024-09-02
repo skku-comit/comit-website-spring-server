@@ -45,31 +45,31 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/token_expired", "Access token expired");
+            ResponseUtil.createFilterErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/token_expired", "Access token expired");
             return;
         } catch (JwtException e) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/invalid_token", "Invalid JWT token");
+            ResponseUtil.createFilterErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/invalid_token", "Invalid JWT token");
             return;
         }
 
         // 토큰이 access인지 확인 (발급 시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
         if (!category.equals("access")) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/invalid_access_token", "Invalid access token");
+            ResponseUtil.createFilterErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/invalid_access_token", "Invalid access token");
             return;
         }
 
         Long userId = jwtUtil.getUserId(accessToken);
 
         if (userId == null) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/user_id_not_found", "User ID not found in token");
+            ResponseUtil.createFilterErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/user_id_not_found", "User ID not found in token");
             return;
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserById(userId);
 
         if (userDetails == null) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/user_not_found", "User not found");
+            ResponseUtil.createFilterErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/user_not_found", "User not found");
             return;
         }
 

@@ -42,7 +42,7 @@ public class ResponseUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     // Write error response in filter
-    public static void writeErrorResponse(HttpServletResponse response, HttpStatus status, String errorType, String detail) throws IOException {
+    public static void createFilterErrorResponse(HttpServletResponse response, HttpStatus status, String errorType, String detail) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -60,7 +60,7 @@ public class ResponseUtil {
     }
 
     // Write success response in filter
-    public static void writeSuccessResponse(HttpServletResponse response, Object data, HttpStatus status) throws IOException {
+    public static void createFilterSuccessResponse(HttpServletResponse response, Object data, HttpStatus status) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -75,7 +75,7 @@ public class ResponseUtil {
     }
 
     // Write success response in filter with Location header
-    public static void writeSuccessResponse(HttpServletResponse response, Object data, HttpStatus status, URI location) throws IOException {
+    public static void createFilterSuccessResponse(HttpServletResponse response, Object data, HttpStatus status, URI location) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

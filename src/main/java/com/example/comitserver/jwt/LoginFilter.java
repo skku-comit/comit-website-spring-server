@@ -77,7 +77,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         user.put("id", userId);
         user.put("username", username);
 
-        ResponseUtil.writeSuccessResponse(response, user, HttpStatus.OK);
+        ResponseUtil.createFilterSuccessResponse(response, user, HttpStatus.OK);
     }
 
     @Override
@@ -85,14 +85,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
 
         if (failed instanceof BadCredentialsException) {
-            ResponseUtil.writeErrorResponse(
+            ResponseUtil.createFilterErrorResponse(
                     response,
                     HttpStatus.UNAUTHORIZED,
                     endpoint + "/invalid_credentials",
                     "Invalid email or password."
             );
         } else {
-            ResponseUtil.writeErrorResponse(
+            ResponseUtil.createFilterErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
                     endpoint + "/authentication_failed",
