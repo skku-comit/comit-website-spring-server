@@ -70,7 +70,7 @@ public class UserController {
         return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
     }
 
-    @GetMapping("/users/studies/created")
+    @GetMapping("/users/studies-created")
     public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
