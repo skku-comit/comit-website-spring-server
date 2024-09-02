@@ -2,8 +2,10 @@ package com.example.comitserver.service;
 
 import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
+import com.example.comitserver.entity.CreatedStudyEntity;
 import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.repository.CreatedStudyRepository;
 import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,12 @@ public class StudyService {
 
     private final StudyRepository studyRepository;
     private final UserRepository userRepository;
+    private final CreatedStudyRepository createdStudyRepository;
 
-    public StudyService(StudyRepository studyRepository, UserRepository userRepository) {
+    public StudyService(StudyRepository studyRepository, UserRepository userRepository, CreatedStudyRepository createdStudyRepository) {
         this.studyRepository = studyRepository;
         this.userRepository = userRepository;
+        this.createdStudyRepository = createdStudyRepository;
     }
 
     public List<StudyEntity> showAllStudies() {
@@ -39,8 +43,10 @@ public class StudyService {
 
         newStudy.setTitle(studyRequestDTO.getTitle());
         newStudy.setImageSrc(studyRequestDTO.getImageSrc());
-       // header의 token에서 user id 가져와서 findByID해서 mentor 넣어야 함
-        newStudy.setMentor(userRepository.findById(customUserDetails.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getUserId())));
+        // Get the mentor (user) from the repository using the user ID from the customUserDetails
+        UserEntity mentor = userRepository.findById(customUserDetails.getUserId())
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getUserId()));
+        newStudy.setMentor(mentor);
         newStudy.setDay(studyRequestDTO.getDay());
         newStudy.setStartTime(studyRequestDTO.getStartTime());
         newStudy.setEndTime(studyRequestDTO.getEndTime());
@@ -51,6 +57,11 @@ public class StudyService {
         newStudy.setIsRecruiting(studyRequestDTO.getIsRecruiting());
         newStudy.setSemester(studyRequestDTO.getSemester());
         studyRepository.save(newStudy);
+
+        CreatedStudyEntity createdStudy = new CreatedStudyEntity();
+        createdStudy.setUser(mentor);
+        createdStudy.setStudy(newStudy);
+        createdStudyRepository.save(createdStudy);
 
         return newStudy;
 

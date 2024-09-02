@@ -2,7 +2,9 @@ package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.UserDTO;
+import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.service.StudyService;
 import com.example.comitserver.service.UserService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -66,5 +68,12 @@ public class UserController {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.deleteUser(userId);
         return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/users/studies/created")
+    public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = ((CustomUserDetails) userDetails).getUserId();
+        List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
+        return ResponseUtil.createSuccessResponse(createdStudies, HttpStatus.OK);
     }
 }
