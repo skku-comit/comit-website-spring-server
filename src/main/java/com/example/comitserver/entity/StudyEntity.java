@@ -29,7 +29,7 @@ public class StudyEntity extends BaseTimeEntity{
     @Column(nullable = false)
     private String imageSrc;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // FetchType이 LAZY면 문제가 발생
     @JoinColumn(name = "user_id")
     private UserEntity mentor;
 
