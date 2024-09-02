@@ -36,13 +36,11 @@ public class UserAdminService {
 
     public UserEntity getUserById(Long id) {
         return userRepository.findById(id)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     public void updateUserRole(Long id, Role role) {
         UserEntity user = userRepository.findById(id)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         user.setRole(role);
         userRepository.save(user);
@@ -50,7 +48,6 @@ public class UserAdminService {
 
     public void updateUserIsStaff(Long id, Boolean isStaff) {
         UserEntity user = userRepository.findById(id)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         user.setIsStaff(isStaff);
         userRepository.save(user);

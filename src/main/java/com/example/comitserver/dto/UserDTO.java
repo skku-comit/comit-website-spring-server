@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 public class UserDTO {
-
+    // field validity check (임시)
     @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters.")
     private String username;
 

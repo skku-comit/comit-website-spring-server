@@ -38,35 +38,38 @@ public class JWTFilter extends OncePerRequestFilter {
         // Bearer 이후의 토큰 부분만 추출
         String accessToken = authorizationHeader.substring(7);
 
-        // 토큰 만료 여부 확인, 만료시 다음 필터로 넘기지 않음
+        // URI에서 엔드포인트 추출
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
+
+        // 토큰 만료 여부 확인, 만료 시 다음 필터로 넘기지 않음
         try {
             jwtUtil.isExpired(accessToken);
         } catch (ExpiredJwtException e) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Access token expired");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/token_expired", "Access token expired");
             return;
         } catch (JwtException e) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid JWT token");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/invalid_token", "Invalid JWT token");
             return;
         }
 
-        // 토큰이 access인지 확인 (발급시 페이로드에 명시)
+        // 토큰이 access인지 확인 (발급 시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
         if (!category.equals("access")) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Invalid access token");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/invalid_access_token", "Invalid access token");
             return;
         }
 
         Long userId = jwtUtil.getUserId(accessToken);
 
         if (userId == null) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "User ID not found in token");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/user_id_not_found", "User ID not found in token");
             return;
         }
 
         UserDetails userDetails = customUserDetailsService.loadUserById(userId);
 
         if (userDetails == null) {
-            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "User not found");
+            ResponseUtil.writeErrorResponse(response, HttpStatus.UNAUTHORIZED, endpoint + "/user_not_found", "User not found");
             return;
         }
 

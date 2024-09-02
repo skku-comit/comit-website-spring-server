@@ -3,6 +3,7 @@ package com.example.comitserver.service;
 import com.example.comitserver.dto.UserDTO;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
+import com.example.comitserver.exception.ResourceNotFoundException;
 import com.example.comitserver.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,40 +28,36 @@ public class UserService {
 
     public UserEntity getCurrentUserProfile(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
 
     public UserEntity getUserProfile(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     }
 
     public void updateUserProfile(Long userId, @Valid UserDTO userDTO) {
         UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
 
-        // 중복 체크
+        // @Valid 가 UserDto의 필드 validity check
         checkForDuplicateFields(userDTO, user);
-        // 필드별로 null 체크 후 업데이트
         updateUserFields(user, userDTO);
 
         userRepository.save(user);
     }
 
     private void checkForDuplicateFields(UserDTO userDTO, UserEntity user) {
-        // 이메일 중복 체크 (자신의 이메일은 제외)
         if (userDTO.getEmail() != null && !userDTO.getEmail().equals(user.getEmail()) &&
                 userRepository.existsByEmail(userDTO.getEmail())) {
             throw new DuplicateResourceException("Email is already in use.");
         }
 
-        // 학번 중복 체크 (자신의 학번은 제외)
         if (userDTO.getStudentId() != null && !userDTO.getStudentId().equals(user.getStudentId()) &&
                 userRepository.existsByStudentId(userDTO.getStudentId())) {
             throw new DuplicateResourceException("Student ID is already in use.");
         }
 
-        // 전화번호 중복 체크 (자신의 전화번호는 제외)
         if (userDTO.getPhoneNumber() != null && !userDTO.getPhoneNumber().equals(user.getPhoneNumber()) &&
                 userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
             throw new DuplicateResourceException("Phone number is already in use.");

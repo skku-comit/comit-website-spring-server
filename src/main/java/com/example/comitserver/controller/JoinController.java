@@ -7,6 +7,7 @@ import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.service.JoinService;
 import com.example.comitserver.utils.ResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -30,7 +31,7 @@ public class JoinController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO) {
+    public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO, HttpServletRequest request) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
         UserDTO userDTO = modelMapper.map(createdUser, UserDTO.class);
 
@@ -44,25 +45,28 @@ public class JoinController {
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex) {
+    public ResponseEntity<?> handleDuplicateResourceException(DuplicateResourceException ex, HttpServletRequest request) {
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
         return ResponseUtil.createErrorResponse(
                 HttpStatus.CONFLICT,
-                "Join/DuplicateResource",
+                endpoint + "/duplicate_resource",
                 ex.getMessage()
         );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ServerResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ServerResponseDTO> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String errorMessage = ex.getBindingResult().getAllErrors().stream()
                 .findFirst()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse("Validation error");
 
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
+
         return ResponseUtil.createErrorResponse(
                 HttpStatus.BAD_REQUEST,
-                "Join/ValidationFailed",
+                endpoint + "/validation_failed",
                 errorMessage
         );
     }

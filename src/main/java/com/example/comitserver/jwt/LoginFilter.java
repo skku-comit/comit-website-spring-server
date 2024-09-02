@@ -82,25 +82,23 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
-        Map<String, Object> responseBody = new HashMap<>();
+        String endpoint = ResponseUtil.extractEndpoint(request.getRequestURI());
 
         if (failed instanceof BadCredentialsException) {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.UNAUTHORIZED,
-                    "Login/InvalidFormat",
+                    endpoint + "/invalid_credentials",
                     "Invalid email or password."
             );
         } else {
             ResponseUtil.writeErrorResponse(
                     response,
                     HttpStatus.BAD_REQUEST,
-                    "Login/AuthenticationFailed",
+                    endpoint + "/authentication_failed",
                     "An unknown error occurred. Please check your request and try again later."
             );
         }
-
-        objectMapper.writeValue(response.getWriter(), responseBody);
     }
 
     private void addRefreshEntity(Long userId, String refresh) {
