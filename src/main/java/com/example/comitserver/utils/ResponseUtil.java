@@ -31,7 +31,7 @@ public class ResponseUtil {
     }
 
     // Create success response in controller with Location header
-    public static ResponseEntity<ServerResponseDTO> createSuccessPostResponse(Object data, HttpStatus status, URI location) {
+    public static ResponseEntity<ServerResponseDTO> createSuccessResponse(Object data, HttpStatus status, URI location) {
         ServerResponseDTO responseDTO = new ServerResponseDTO(null, data);
         return ResponseEntity.status(status)
                 .location(location)

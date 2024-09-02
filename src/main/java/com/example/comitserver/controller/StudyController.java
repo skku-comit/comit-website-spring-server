@@ -64,7 +64,7 @@ public class StudyController {
                 .buildAndExpand(newStudy.getId())
                 .toUri();
 
-        return ResponseUtil.createSuccessPostResponse(modelMapper.map(newStudy, StudyResponseDTO.class), HttpStatus.CREATED, location);
+        return ResponseUtil.createSuccessResponse(modelMapper.map(newStudy, StudyResponseDTO.class), HttpStatus.CREATED, location);
         //return ResponseEntity.created(location).body(modelMapper.map(newStudy, StudyResponseDTO.class));
     }
 
