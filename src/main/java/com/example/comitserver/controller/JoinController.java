@@ -40,7 +40,7 @@ public class JoinController {
                 .buildAndExpand(createdUser.getId())
                 .toUri();
 
-        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.CREATED, location);
+        return ResponseUtil.createSuccessPostResponse(userDTO, HttpStatus.CREATED, location);
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
