@@ -13,25 +13,27 @@ public class StringListConverter implements AttributeConverter<List<String>, Str
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
 
-    // DB 테이블에 들어갈 때 적용됨
     @Override
     public String convertToDatabaseColumn(List<String> attribute) {
+        if (attribute == null) {
+            return "[]"; // or return null, depending on your use case
+        }
         try {
-            // Object to JSON in String
             return mapper.writeValueAsString(attribute);
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Error converting List<String> to JSON String: " + e.getMessage(), e);
         }
-
     }
 
-    // DB 테이블의 데이터를 Object 에 매핑시킬 때 적용됨
     @Override
     public List<String> convertToEntityAttribute(String dbData) {
+        if (dbData == null || dbData.isEmpty()) {
+            return List.of(); // or return null, depending on your use case
+        }
         try {
             return mapper.readValue(dbData, List.class);
         } catch (IOException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Error converting JSON String to List<String>: " + e.getMessage(), e);
         }
     }
 }
