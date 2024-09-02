@@ -4,6 +4,7 @@ import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.ResourceNotFoundException;
 import com.example.comitserver.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -51,5 +52,15 @@ public class UserAdminService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         user.setIsStaff(isStaff);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public boolean deleteUserById(Long id) {
+        if (userRepository.existsById(Math.toIntExact(id))) {
+            userRepository.deleteById(Math.toIntExact(id));
+            return true;
+        } else {
+            return false;
+        }
     }
 }

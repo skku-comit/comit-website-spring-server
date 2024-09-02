@@ -79,16 +79,15 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests((auth) -> auth
                 // /login, /join, /logout, /reissue 경로는 모든 사용자에게 열어둠
-                .requestMatchers("/api/login", "/api/join", "/api/logout", "/api/reissue", "/api/studies", "/api/studies/{id}").permitAll()
+                .requestMatchers("/api/login", "/api/join", "/api/logout", "/api/reissue").permitAll()
                 // /admin 경로는 ADMIN 역할만 접근 가능
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // /admin 외의 GET 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
+                // /admin 외의 GET PATCH PUT 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
                 // /admin 외의 POST 요청은 VERIFIED와 ADMIN만 접근 가능
                 .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("ADMIN", "VERIFIED")
-                // /admin 외의 PATCH 요청은 모두 접근 가능
-//                .requestMatchers(HttpMethod.PATCH, "/api/**").hasAnyRole("MEMBER", "VERIFIED", "ADMIN")
-                .requestMatchers(HttpMethod.PATCH, "/api/**").permitAll()
                 // 나머지 요청은 인증된 사용자만 접근 가능
                 .anyRequest().authenticated()
                 )

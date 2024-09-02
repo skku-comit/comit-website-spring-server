@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -76,6 +77,25 @@ public class UserAdminController {
             return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid isStaff", "Invalid isStaff value provided: " + requestBody.get("isStaff"));
+        }
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+        try {
+            UserEntity user = userAdminService.getUserById(id);
+            boolean deleted = userAdminService.deleteUserById(id);
+
+            if (deleted) {
+                AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+                return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
+            } else {
+                return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
+            }
+        } catch (NoSuchElementException e) {
+            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
+        } catch (Exception e) {
+            return ResponseUtil.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Deletion Failed", "An error occurred while attempting to delete the user.");
         }
     }
 }
