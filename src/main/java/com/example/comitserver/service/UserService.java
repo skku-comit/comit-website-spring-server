@@ -90,12 +90,13 @@ public class UserService {
         }
     }
 
-    public void deleteUser(Long userId) {
-        createdStudyRepository.deleteByUserId(userId);
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
-
-        userRepository.delete(user);
+    public boolean deleteUser(Long userId) {
+        if (userRepository.existsById(Math.toIntExact(userId))) {
+            userRepository.deleteById(Math.toIntExact(userId));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public List<StudyEntity> getCreatedStudies(Long userId) {

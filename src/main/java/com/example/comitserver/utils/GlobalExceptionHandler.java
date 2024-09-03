@@ -5,6 +5,7 @@ import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,6 +13,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.naming.AuthenticationException;
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -43,24 +45,28 @@ public class GlobalExceptionHandler {
         return ResponseUtil.createErrorResponse(HttpStatus.UNAUTHORIZED, errorType, "Authentication failed.");
     }
 
-//    // JWT 토큰 만료 및 기타 JWT 예외 처리
-//    @ExceptionHandler(ExpiredJwtException.class)
-//    public ResponseEntity<ServerResponseDTO> handleExpiredJwtException(ExpiredJwtException ex, WebRequest request) {
-//        String errorType = ResponseUtil.extractEndpoint(request) + "/token_expired";
-//        return ResponseUtil.createErrorResponse(HttpStatus.UNAUTHORIZED, errorType, "The access token has expired.");
-//    }
-//
-//    @ExceptionHandler(JwtException.class)
-//    public ResponseEntity<ServerResponseDTO> handleJwtException(JwtException ex, WebRequest request) {
-//        String errorType = ResponseUtil.extractEndpoint(request) + "/invalid_token";
-//        return ResponseUtil.createErrorResponse(HttpStatus.UNAUTHORIZED, errorType, "Invalid JWT token.");
-//    } -> jwtfilter에서 처리되는것으로 확인됨
-
-    // user detail null 토큰 없을 때 예외 처리
+    // 다양한 null pointer exception 처리
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ServerResponseDTO> handleNullPointerException(NullPointerException ex, WebRequest request) {
-        String errorType = ResponseUtil.extractEndpoint(request) + "/unauthorized";
-        return ResponseUtil.createErrorResponse(HttpStatus.UNAUTHORIZED, errorType, "Authentication not provided.");
+        String endpoint = ResponseUtil.extractEndpoint(request);
+
+        // 기본 에러 타입과 메시지 설정
+        String errorType = endpoint + "/null_pointer_exception";
+        String errorMessage = "A null pointer exception occurred.";
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        // 특정 시나리오에서의 커스터마이즈
+        if (endpoint.contains("/auth") || endpoint.contains("/login") || endpoint.contains("/token")) {
+            errorType = endpoint + "/unauthorized";
+            errorMessage = "Authentication not provided.";
+            status = HttpStatus.UNAUTHORIZED;
+        } else if (endpoint.contains("/users")) {
+            errorType = endpoint + "/user_error";
+            errorMessage = "A null pointer exception occurred while processing user data.";
+            status = HttpStatus.BAD_REQUEST;
+        }
+
+        return ResponseUtil.createErrorResponse(status, errorType, errorMessage);
     }
 
     // update 할때 중복 예외 처리
@@ -73,6 +79,13 @@ public class GlobalExceptionHandler {
     // IllegalArgumentException 처리
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ServerResponseDTO> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        String errorType = ResponseUtil.extractEndpoint(request) + "/bad_request";
+        return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, errorType, ex.getMessage());
+    }
+
+    // JSON 파싱 오류 등 메시지 읽기 오류 처리
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ServerResponseDTO> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
         String errorType = ResponseUtil.extractEndpoint(request) + "/bad_request";
         return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, errorType, ex.getMessage());
     }
