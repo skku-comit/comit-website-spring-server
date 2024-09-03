@@ -55,29 +55,23 @@ public class UserAdminController {
 
     @PatchMapping("/users/{id}/role")
     public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
-        try {
-            Role role = Role.valueOf(requestBody.get("role"));
-            userAdminService.updateUserRole(id, role);
-            return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
-        } catch (IllegalArgumentException e) {
-            return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid Role", "Invalid role value provided: " + requestBody.get("role"));
-        }
+        Role role = Role.valueOf(requestBody.get("role"));
+        userAdminService.updateUserRole(id, role);
+        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/users/{id}/isStaff")
     public ResponseEntity<?> updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
-        try {
-            Boolean isStaff = requestBody.get("isStaff");
+        Boolean isStaff = requestBody.get("isStaff");
 
-            if (isStaff == null) {
-                return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid isStaff", "isStaff value must be provided and must be either true or false.");
-            }
-
-            userAdminService.updateUserIsStaff(id, isStaff);
-            return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
-        } catch (IllegalArgumentException e) {
-            return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid isStaff", "Invalid isStaff value provided: " + requestBody.get("isStaff"));
+        // 엔티티에서 nullable하지 않아 발생할 수 있는 500 Internal Server Error를 방지하고
+        // 클라이언트에게 400 Bad Request 응답을 반환하도록 설정
+        if (isStaff == null) {
+            throw new IllegalArgumentException("isStaff value must be provided and must be either true or false.");
         }
+
+        userAdminService.updateUserIsStaff(id, isStaff);
+        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/users/{id}")
