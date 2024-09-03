@@ -3,6 +3,7 @@ package com.example.comitserver.controller;
 import com.example.comitserver.dto.AdminUserResponseDTO;
 import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.exception.ResourceNotFoundException;
 import com.example.comitserver.service.UserAdminService;
 import com.example.comitserver.utils.ResponseUtil;
 import org.modelmapper.ModelMapper;
@@ -74,22 +75,36 @@ public class UserAdminController {
         return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
     }
 
+//    @DeleteMapping("/users/{id}")
+//    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
+//        try {
+//            UserEntity user = userAdminService.getUserById(id);
+//            boolean deleted = userAdminService.deleteUserById(id);
+//
+//            if (deleted) {
+//                AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+//                return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
+//            } else {
+//                return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
+//            }
+//        } catch (NoSuchElementException e) {
+//            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
+//        } catch (Exception e) {
+//            return ResponseUtil.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Deletion Failed", "An error occurred while attempting to delete the user.");
+//        }
+//    }
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-        try {
-            UserEntity user = userAdminService.getUserById(id);
-            boolean deleted = userAdminService.deleteUserById(id);
+        UserEntity user = userAdminService.getUserById(id); // 존재하지 않을 때 이미 GlobalExceptionHandler에서 처리됨
+        boolean deleted = userAdminService.deleteUserById(id);
 
-            if (deleted) {
-                AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
-                return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
-            } else {
-                return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
-            }
-        } catch (NoSuchElementException e) {
-            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
-        } catch (Exception e) {
-            return ResponseUtil.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Deletion Failed", "An error occurred while attempting to delete the user.");
+        // 삭제 실패 시, Internal Server Error 응답 반환
+        if (!deleted) {
+            return ResponseUtil.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Deletion Failed", "Failed to delete user with id: " + id);
+        } else {
+            // 삭제 성공 시, OK 응답 반환
+            AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+            return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
         }
     }
 }
