@@ -2,6 +2,7 @@ package com.example.comitserver.jwt;
 
 import com.example.comitserver.dto.*;
 import com.example.comitserver.entity.RefreshEntity;
+import com.example.comitserver.entity.Role;
 import com.example.comitserver.repository.RefreshRepository;
 import com.example.comitserver.utils.ResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,6 +62,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUserId();
         String username = userDetails.getUsername();
+        Role role = userDetails.getRole();
 
         String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
         String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
@@ -73,6 +75,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Map<String, Object> user = new HashMap<>();
         user.put("id", userId);
         user.put("username", username);
+        user.put("role", role);
 
         ResponseUtil.createFilterSuccessResponse(response, user, HttpStatus.OK);
     }
