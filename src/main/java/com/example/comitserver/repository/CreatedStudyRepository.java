@@ -8,4 +8,8 @@ import java.util.List;
 
 public interface CreatedStudyRepository extends JpaRepository<CreatedStudyEntity, Long> {
     List<CreatedStudyEntity> findByUser(UserEntity user);
+
+    void deleteByStudyId(Long studyId);
+
+    void deleteByUserId(Long userId);
 }

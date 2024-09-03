@@ -91,6 +91,7 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
+        createdStudyRepository.deleteByUserId(userId);
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userId));
 
