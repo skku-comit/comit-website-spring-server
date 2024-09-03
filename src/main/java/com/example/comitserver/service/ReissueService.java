@@ -1,15 +1,11 @@
 package com.example.comitserver.service;
 
-import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.jwt.JWTUtil;
 import com.example.comitserver.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -58,13 +54,11 @@ public class ReissueService {
     }
 
     public String createAccessToken(Long userId) {
-//        return jwtUtil.createJwt("access", userId, 1800000L);
-        return jwtUtil.createJwt("access", userId, 120000L);
+        return jwtUtil.createJwt("access", userId, 1800000L);
     }
 
     public String createRefreshToken(Long userId) {
-//        return jwtUtil.createJwt("refresh", userId, 1209600000L);
-        return jwtUtil.createJwt("refresh", userId, 240000L);
+        return jwtUtil.createJwt("refresh", userId, 1209600000L);
     }
 
     public void updateRefreshTokenInDatabase(Long userId, String oldRefreshToken, String newRefreshToken) {
@@ -73,8 +67,7 @@ public class ReissueService {
     }
 
     private void addRefreshEntity(Long userId, String refresh) {
-//        Date date = new Date(System.currentTimeMillis() + 1209600000L);
-        Date date = new Date(System.currentTimeMillis() + 240000L);
+        Date date = new Date(System.currentTimeMillis() + 1209600000L);
 
         RefreshEntity refreshEntity = new RefreshEntity();
         refreshEntity.setUserId(userId);

@@ -87,6 +87,7 @@ public class StudyService {
     }
 
     public void deleteStudy(Long id) {
+        createdStudyRepository.deleteByStudyId(id);
         StudyEntity deletingStudy = showStudy(id);
         studyRepository.delete(deletingStudy);
     }

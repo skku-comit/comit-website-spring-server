@@ -42,11 +42,10 @@ public class JWTUtil {
     }
 
     private static final int TWO_WEEKS_IN_SECONDS = 2 * 7 * 24 * 60 * 60;
-    private static final int TWO_MINUTES_IN_SECONDS = 2 * 60;
 
     public static Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(TWO_MINUTES_IN_SECONDS);
+        cookie.setMaxAge(TWO_WEEKS_IN_SECONDS);
         //cookie.setSecure(true); // HTTPS 사용 시 활성화
         //cookie.setPath("/"); // 쿠키 경로 설정
         cookie.setHttpOnly(true);

@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,6 +50,7 @@ public class StudyEntity extends BaseTimeEntity{
     private Level level;
 
     @Convert(converter = StringListConverter.class)
+    @Column(nullable = false)
     private List<String> stacks;
 
     @Enumerated(EnumType.STRING)
@@ -64,4 +66,8 @@ public class StudyEntity extends BaseTimeEntity{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Semester semester;
+
+    public void setStacks(List<String> stacks) {
+        this.stacks = (stacks != null) ? stacks : new ArrayList<>();
+    }
 }

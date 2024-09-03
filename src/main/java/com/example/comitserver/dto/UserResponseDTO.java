@@ -9,6 +9,7 @@ public class UserResponseDTO {
     private String phoneNumber;
     private String studentId;
     private String email;
+    private String position;
     private String bio;
     private String github;
     private String blog;
