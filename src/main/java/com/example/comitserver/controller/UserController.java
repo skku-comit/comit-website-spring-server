@@ -47,28 +47,29 @@ public class UserController {
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
-    // 업데이트 후 사용자 정보를 반환(200) or 반환하지 않은(204) 중 선택 가능
     @PatchMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserRequestDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.updateUserProfile(userId, userDTO);
-        // 업데이트된 사용자 정보를 반환할 수 있음
         UserEntity updatedProfile = userService.getUserProfile(userId);
         UserResponseDTO updatedUserDTO = modelMapper.map(updatedProfile, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(updatedUserDTO, HttpStatus.OK);
     }
-//    @PatchMapping("/profile")
-//    public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserDTO userDTO) {
-//        Long userId = ((CustomUserDetails) userDetails).getUserId();
-//        userService.updateUserProfile(userId, userDTO);
-//        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
-//    }
 
     @DeleteMapping("/profile")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
-        userService.deleteUser(userId);
-        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+        UserEntity user = userService.getUserProfile(userId);
+        boolean deleted = userService.deleteUser(userId);
+
+        // 삭제 실패 시, Internal Server Error 응답 반환
+        if (!deleted) {
+            return ResponseUtil.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Deletion Failed", "Failed to delete user with id: " + userId);
+        } else {
+            // 삭제 성공 시, OK 응답 반환
+            UserResponseDTO userDTO = modelMapper.map(user, UserResponseDTO.class);
+            return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
+        }
     }
 
     @GetMapping("/profile/studies-created")

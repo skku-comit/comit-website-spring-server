@@ -75,24 +75,6 @@ public class UserAdminController {
         return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
     }
 
-//    @DeleteMapping("/users/{id}")
-//    public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
-//        try {
-//            UserEntity user = userAdminService.getUserById(id);
-//            boolean deleted = userAdminService.deleteUserById(id);
-//
-//            if (deleted) {
-//                AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
-//                return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
-//            } else {
-//                return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
-//            }
-//        } catch (NoSuchElementException e) {
-//            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "User Not Found", "No user found with id: " + id);
-//        } catch (Exception e) {
-//            return ResponseUtil.createErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Deletion Failed", "An error occurred while attempting to delete the user.");
-//        }
-//    }
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUserById(@PathVariable Long id) {
         UserEntity user = userAdminService.getUserById(id); // 존재하지 않을 때 이미 GlobalExceptionHandler에서 처리됨
