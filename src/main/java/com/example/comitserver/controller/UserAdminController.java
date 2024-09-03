@@ -56,13 +56,16 @@ public class UserAdminController {
 
     @PatchMapping("/users/{id}/role")
     public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+        UserEntity user = userAdminService.getUserById(id);
         Role role = Role.valueOf(requestBody.get("role"));
         userAdminService.updateUserRole(id, role);
-        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/users/{id}/isStaff")
     public ResponseEntity<?> updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
+        UserEntity user = userAdminService.getUserById(id);
         Boolean isStaff = requestBody.get("isStaff");
 
         // 엔티티에서 nullable하지 않아 발생할 수 있는 500 Internal Server Error를 방지하고
@@ -70,9 +73,9 @@ public class UserAdminController {
         if (isStaff == null) {
             throw new IllegalArgumentException("isStaff value must be provided and must be either true or false.");
         }
-
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
         userAdminService.updateUserIsStaff(id, isStaff);
-        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/users/{id}")
