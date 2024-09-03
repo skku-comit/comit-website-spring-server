@@ -68,7 +68,8 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
         userService.deleteUser(userId);
-        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+        UserResponseDTO userDTO = modelMapper.map(userService.getUserProfile(userId), UserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @GetMapping("/profile/studies-created")

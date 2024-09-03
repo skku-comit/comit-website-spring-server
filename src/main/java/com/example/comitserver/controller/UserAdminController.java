@@ -58,7 +58,8 @@ public class UserAdminController {
         try {
             Role role = Role.valueOf(requestBody.get("role"));
             userAdminService.updateUserRole(id, role);
-            return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+            AdminUserResponseDTO userDTO = modelMapper.map(userAdminService.getUserById(id), AdminUserResponseDTO.class);
+            return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid Role", "Invalid role value provided: " + requestBody.get("role"));
         }
@@ -74,7 +75,9 @@ public class UserAdminController {
             }
 
             userAdminService.updateUserIsStaff(id, isStaff);
-            return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+
+            AdminUserResponseDTO userDTO = modelMapper.map(userAdminService.getUserById(id), AdminUserResponseDTO.class);
+            return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Invalid isStaff", "Invalid isStaff value provided: " + requestBody.get("isStaff"));
         }
