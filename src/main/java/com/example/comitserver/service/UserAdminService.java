@@ -3,6 +3,7 @@ package com.example.comitserver.service;
 import com.example.comitserver.entity.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.ResourceNotFoundException;
+import com.example.comitserver.repository.CreatedStudyRepository;
 import com.example.comitserver.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,9 +15,11 @@ import java.util.List;
 public class UserAdminService {
 
     private final UserRepository userRepository;
+    private final CreatedStudyRepository createdStudyRepository;
 
-    public UserAdminService(UserRepository userRepository) {
+    public UserAdminService(UserRepository userRepository, CreatedStudyRepository createdStudyRepository) {
         this.userRepository = userRepository;
+        this.createdStudyRepository = createdStudyRepository;
     }
 
     public List<UserEntity> getAllUsers() {
@@ -56,6 +59,7 @@ public class UserAdminService {
 
     public boolean deleteUserById(Long id) {
         if (userRepository.existsById(Math.toIntExact(id))) {
+            createdStudyRepository.deleteByUserId(id);
             userRepository.deleteById(Math.toIntExact(id));
             return true;
         } else {
