@@ -56,16 +56,15 @@ public class UserAdminController {
 
     @PatchMapping("/users/{id}/role")
     public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
-        UserEntity user = userAdminService.getUserById(id);
         Role role = Role.valueOf(requestBody.get("role"));
         userAdminService.updateUserRole(id, role);
+        UserEntity user = userAdminService.getUserById(id);
         AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/users/{id}/isStaff")
     public ResponseEntity<?> updateUserIsStaff(@PathVariable Long id, @RequestBody Map<String, Boolean> requestBody) {
-        UserEntity user = userAdminService.getUserById(id);
         Boolean isStaff = requestBody.get("isStaff");
 
         // 엔티티에서 nullable하지 않아 발생할 수 있는 500 Internal Server Error를 방지하고
@@ -73,8 +72,24 @@ public class UserAdminController {
         if (isStaff == null) {
             throw new IllegalArgumentException("isStaff value must be provided and must be either true or false.");
         }
-        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
         userAdminService.updateUserIsStaff(id, isStaff);
+        UserEntity user = userAdminService.getUserById(id);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
+    }
+
+    @PatchMapping("/users/{id}/position")
+    public ResponseEntity<?> updateUserPosition(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+        String position = requestBody.get("position");
+
+        // 엔티티에서 nullable하지 않아 발생할 수 있는 500 Internal Server Error를 방지하고
+        // 클라이언트에게 400 Bad Request 응답을 반환하도록 설정
+        if (position == null) {
+            throw new IllegalArgumentException("position value must be provided.");
+        }
+        userAdminService.updateUserPosition(id, position);
+        UserEntity user = userAdminService.getUserById(id);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 

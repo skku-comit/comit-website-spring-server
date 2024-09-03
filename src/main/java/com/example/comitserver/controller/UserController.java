@@ -42,17 +42,17 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
-        UserEntity userProfile = userService.getUserProfile(userId);
-        UserResponseDTO userDTO = modelMapper.map(userProfile, UserResponseDTO.class);
+        UserEntity user = userService.getUserProfile(userId);
+        UserResponseDTO userDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserRequestDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getUserId();
+        UserEntity user = userService.getUserProfile(userId);
         userService.updateUserProfile(userId, userDTO);
-        UserEntity updatedProfile = userService.getUserProfile(userId);
-        UserResponseDTO updatedUserDTO = modelMapper.map(updatedProfile, UserResponseDTO.class);
+        UserResponseDTO updatedUserDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(updatedUserDTO, HttpStatus.OK);
     }
 
