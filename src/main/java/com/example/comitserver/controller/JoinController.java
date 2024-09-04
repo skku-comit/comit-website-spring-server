@@ -1,8 +1,8 @@
 package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.JoinDTO;
+import com.example.comitserver.dto.JoinResponseDTO;
 import com.example.comitserver.dto.ServerResponseDTO;
-import com.example.comitserver.dto.UserResponseDTO;
 import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
@@ -33,7 +33,7 @@ public class JoinController {
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
-    public JoinController(JoinService joinService, ModelMapper modelMapper, ReissueService reissueService, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
+    public JoinController(JoinService joinService, ModelMapper modelMapper, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.joinService = joinService;
         this.modelMapper = modelMapper;
         this.jwtUtil = jwtUtil;
@@ -43,7 +43,7 @@ public class JoinController {
     @PostMapping("/join")
     public ResponseEntity<?> joinProcess(@RequestBody @Valid JoinDTO joinDTO, HttpServletResponse response) {
         UserEntity createdUser = joinService.joinProcess(joinDTO);
-        UserResponseDTO userDTO = modelMapper.map(createdUser, UserResponseDTO.class);
+        JoinResponseDTO userDTO = modelMapper.map(createdUser, JoinResponseDTO.class);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath()
