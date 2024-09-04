@@ -48,7 +48,7 @@ jobs:
   # EC2로 배포
   deploy-to-ec2:
     runs-on: ubuntu-latest
-    needs: deploy-to-raspberrypi  # 라즈베리파이 배포 후 실행
+    needs: build
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
