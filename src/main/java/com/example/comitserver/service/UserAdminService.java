@@ -57,6 +57,13 @@ public class UserAdminService {
         userRepository.save(user);
     }
 
+    public void updateUserPosition(Long id, String position) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        user.setPosition(position);
+        userRepository.save(user);
+    }
+
     public boolean deleteUserById(Long id) {
         if (userRepository.existsById(Math.toIntExact(id))) {
             createdStudyRepository.deleteByUserId(id);

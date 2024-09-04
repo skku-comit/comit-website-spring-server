@@ -58,7 +58,9 @@ public class UserAdminController {
     public ResponseEntity<?> updateUserRole(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
         Role role = Role.valueOf(requestBody.get("role"));
         userAdminService.updateUserRole(id, role);
-        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+        UserEntity user = userAdminService.getUserById(id);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/users/{id}/isStaff")
@@ -70,9 +72,25 @@ public class UserAdminController {
         if (isStaff == null) {
             throw new IllegalArgumentException("isStaff value must be provided and must be either true or false.");
         }
-
         userAdminService.updateUserIsStaff(id, isStaff);
-        return ResponseUtil.createSuccessResponse(null, HttpStatus.NO_CONTENT);
+        UserEntity user = userAdminService.getUserById(id);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
+    }
+
+    @PatchMapping("/users/{id}/position")
+    public ResponseEntity<?> updateUserPosition(@PathVariable Long id, @RequestBody Map<String, String> requestBody) {
+        String position = requestBody.get("position");
+
+        // 엔티티에서 nullable하지 않아 발생할 수 있는 500 Internal Server Error를 방지하고
+        // 클라이언트에게 400 Bad Request 응답을 반환하도록 설정
+        if (position == null) {
+            throw new IllegalArgumentException("position value must be provided.");
+        }
+        userAdminService.updateUserPosition(id, position);
+        UserEntity user = userAdminService.getUserById(id);
+        AdminUserResponseDTO userDTO = modelMapper.map(user, AdminUserResponseDTO.class);
+        return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @DeleteMapping("/users/{id}")
