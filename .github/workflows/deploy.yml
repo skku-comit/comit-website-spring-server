@@ -27,9 +27,8 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-        # 빌드 과정에서 필요한 추가적인 환경 설정이나 명령어가 있다면 여기에 추가
 
-  deploy:
+  deploy-to-rasberrypi:
     runs-on: ubuntu-latest
     needs: build # 빌드 단계가 성공적으로 완료된 후에만 배포 단계가 실행됩니다
 
@@ -45,3 +44,20 @@ jobs:
       - name: Deploy Application
         run: ssh -o StrictHostKeyChecking=no comit@59.11.215.13 "cd /home/comit && ./deploy.sh"
         # 서버에서 deploy.sh 스크립트를 실행해 배포
+
+  # EC2로 배포
+  deploy-to-ec2:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+      - name: Deploy Application to EC2
+        run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@13.209.91.95 "cd /home/ubuntu && ./deploy.sh"
+        # EC2 서버에서 deploy.sh 실행
