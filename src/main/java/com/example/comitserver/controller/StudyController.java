@@ -8,6 +8,7 @@ import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.service.StudyService;
 import com.example.comitserver.utils.ResponseUtil;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -68,23 +69,49 @@ public class StudyController {
         //return ResponseEntity.created(location).body(modelMapper.map(newStudy, StudyResponseDTO.class));
     }
 
-    @PutMapping("/studies/{id}")
-    public ResponseEntity<ServerResponseDTO> putStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    @PatchMapping("/studies/{id}")
+    public ResponseEntity<ServerResponseDTO> patchStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
 
         if (studyService.identification(id, customUserDetails)) {
-            StudyEntity updatedStudy = studyService.updateStudy(id, studyRequestDTO);
+            StudyEntity existingStudy = studyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Study not found"));
 
-            if (updatedStudy == null) {
-                return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "the result of updating study is null");
-                //return ResponseEntity.notFound().build();
+            if (studyRequestDTO.getTitle() != null) {
+                existingStudy.setTitle(studyRequestDTO.getTitle());
             }
-
-            return ResponseUtil.createSuccessResponse(modelMapper.map(updatedStudy, StudyResponseDTO.class), HttpStatus.OK);
-            //return ResponseEntity.ok(modelMapper.map(updatedStudy, StudyResponseDTO.class));
+            if (studyRequestDTO.getImageSrc() != null) {
+                existingStudy.setImageSrc(studyRequestDTO.getImageSrc());
+            }
+            if (studyRequestDTO.getDay() != null) {
+                existingStudy.setDay(studyRequestDTO.getDay());
+            }
+            if (studyRequestDTO.getStartTime() != null) {
+                existingStudy.setStartTime(studyRequestDTO.getStartTime());
+            }
+            if (studyRequestDTO.getEndTime() != null) {
+                existingStudy.setEndTime(studyRequestDTO.getEndTime());
+            }
+            if (studyRequestDTO.getLevel() != null) {
+                existingStudy.setLevel(studyRequestDTO.getLevel());
+            }
+            if (studyRequestDTO.getStacks() != null) {
+                existingStudy.setStacks(studyRequestDTO.getStacks());
+            }
+            if (studyRequestDTO.getCampus() != null) {
+                existingStudy.setCampus(studyRequestDTO.getCampus());
+            }
+            if (studyRequestDTO.getDescription() != null) {
+                existingStudy.setDescription(studyRequestDTO.getDescription());
+            }
+            if (studyRequestDTO.getIsRecruiting() != null) {
+                existingStudy.setIsRecruiting(studyRequestDTO.getIsRecruiting());
+            }
+            if (studyRequestDTO.getSemester() != null) {
+                existingStudy.setSemester(studyRequestDTO.getSemester());
+            }
+            return ResponseUtil.createSuccessResponse(modelMapper.map(existingStudy, StudyResponseDTO.class), HttpStatus.OK);
         }
         else return ResponseUtil.createErrorResponse(HttpStatus.FORBIDDEN, "Study/PermissionDenied", "the user does not have permission to update this study");
-                //ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
 //    @DeleteMapping("/studies/{id}")
