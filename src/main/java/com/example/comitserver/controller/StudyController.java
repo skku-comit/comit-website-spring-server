@@ -109,6 +109,7 @@ public class StudyController {
             if (studyRequestDTO.getSemester() != null) {
                 existingStudy.setSemester(studyRequestDTO.getSemester());
             }
+            studyRepository.save(existingStudy);
             return ResponseUtil.createSuccessResponse(modelMapper.map(existingStudy, StudyResponseDTO.class), HttpStatus.OK);
         }
         else return ResponseUtil.createErrorResponse(HttpStatus.FORBIDDEN, "Study/PermissionDenied", "the user does not have permission to update this study");
