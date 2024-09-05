@@ -77,6 +77,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // /login, /join, /logout, /reissue 경로는 모든 사용자에게 열어둠
                 .requestMatchers("/api/login", "/api/join", "/api/logout", "/api/reissue").permitAll()
                 // /admin 경로는 ADMIN 역할만 접근 가능
