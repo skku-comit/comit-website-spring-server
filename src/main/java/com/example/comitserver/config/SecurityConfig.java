@@ -33,12 +33,25 @@ public class SecurityConfig {
     private final RefreshRepository refreshRepository;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-
     public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, RefreshRepository refreshRepository, CustomAccessDeniedHandler customAccessDeniedHandler) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
         this.customAccessDeniedHandler = customAccessDeniedHandler;
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // HTTPS 리디렉션 설정
+        http
+                .authorizeHttpRequests((requests) -> requests
+                        .anyRequest().authenticated()
+                )
+                .requiresChannel(channel -> channel
+                        .anyRequest().requiresSecure()  // 모든 요청을 HTTPS로 강제
+                );
+
+        return http.build();
     }
 
     @Bean
