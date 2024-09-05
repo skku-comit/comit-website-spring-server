@@ -14,6 +14,8 @@ public class CorsMvcConfig implements WebMvcConfigurer {
                         "http://localhost:3000",
                         "https://skku-comit.dev",
                         "https://comit-website.vercel.app/"
-                );
+                )
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS");
+
     }
 }
