@@ -41,20 +41,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // HTTPS 리디렉션 설정
-        http
-                .authorizeHttpRequests((requests) -> requests
-                        .anyRequest().authenticated()
-                )
-                .requiresChannel(channel -> channel
-                        .anyRequest().requiresSecure()  // 모든 요청을 HTTPS로 강제
-                );
-
-        return http.build();
-    }
-
-    @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
