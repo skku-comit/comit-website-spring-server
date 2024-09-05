@@ -21,8 +21,7 @@ public class CorsConfig {
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("access", "Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true); // 자격 증명 허용
-        configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+        configuration.setExposedHeaders(Arrays.asList("access", "Set-Cookie", "Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration); // 모든 경로에 적용
