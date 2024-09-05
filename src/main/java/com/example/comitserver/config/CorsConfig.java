@@ -20,7 +20,7 @@ public class CorsConfig {
                 "https://comit-website.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("access", "Authorization", "Content-Type"));
         configuration.setAllowCredentials(true); // 자격 증명 허용
         configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
 
