@@ -23,6 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
 import java.util.Collections;
 
 @Configuration
@@ -51,7 +53,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, CustomUserDetailsService customUserDetailsService) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CustomUserDetailsService customUserDetailsService, CorsFilter corsFilter) throws Exception {
 
         http
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
@@ -96,6 +98,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(customAccessDeniedHandler)
                 );
         http
+                .addFilterBefore(corsFilter, JWTFilter.class)
                 .addFilterBefore(new JWTFilter(jwtUtil, customUserDetailsService), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LogoutFilter.class);
