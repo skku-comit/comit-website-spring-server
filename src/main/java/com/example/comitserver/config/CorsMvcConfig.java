@@ -9,8 +9,12 @@ public class CorsMvcConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
-                .exposedHeaders("Set-Cookie") // 필요한 헤더를 명시적으로 노출
-                .allowedOrigins("*")
+                .exposedHeaders("Set-Cookie")
+                .allowedOrigins(
+                        "http://localhost:3000",
+                        "https://skku-comit.dev",
+                        "https://comit-website.vercel.app"
+                )
                 .allowedMethods("*")
                 .allowedHeaders("*")
                 .allowCredentials(true);
