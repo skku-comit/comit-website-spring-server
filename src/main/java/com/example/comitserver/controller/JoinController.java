@@ -53,7 +53,8 @@ public class JoinController {
 
         Long userId = createdUser.getId();
 
-        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
+//        String accessToken = jwtUtil.createJwt("access", userId, 1800000L);
+        String accessToken = jwtUtil.createJwt("access", userId, 18000000L);
         String refreshToken = jwtUtil.createJwt("refresh", userId, 1209600000L);
 
         Date date = new Date(System.currentTimeMillis() + 1209600000L);

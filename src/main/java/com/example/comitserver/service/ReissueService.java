@@ -54,7 +54,8 @@ public class ReissueService {
     }
 
     public String createAccessToken(Long userId) {
-        return jwtUtil.createJwt("access", userId, 1800000L);
+//        return jwtUtil.createJwt("access", userId, 1800000L);
+        return jwtUtil.createJwt("access", userId, 18000000L);
     }
 
     public String createRefreshToken(Long userId) {
