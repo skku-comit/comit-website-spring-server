@@ -55,7 +55,7 @@ public class StudyEntity extends BaseTimeEntity{
     @Column(nullable = false)
     private Campus campus;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 800)
     private String description;
 
     @Column(nullable = false)
