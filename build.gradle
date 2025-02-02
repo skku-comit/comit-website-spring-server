@@ -30,7 +30,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
 
