@@ -1,26 +1,36 @@
 package com.example.comitserver;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
 import javax.sql.DataSource;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 
 @Configuration
 public class DatabaseConfig {
 
+    @Value("${DB_HOST}")
+    private String dbHost;
+
+    @Value("${DB_PORT}")
+    private String dbPort;
+
+    @Value("${DB_NAME}")
+    private String dbName;
+
+    @Value("${DB_USERNAME}")
+    private String dbUsername;
+
+    @Value("${DB_PASSWORD}")
+    private String dbPassword;
 
     @Bean
     public DataSource dataSource() {
-        Dotenv dotenv = Dotenv.load();
-
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl(dotenv.get("DATABASE_URL"));
-        dataSource.setUsername(dotenv.get("DATABASE_USERNAME"));
-        dataSource.setPassword(dotenv.get("DATABASE_PASSWORD"));
-
-        return dataSource;
+        return DataSourceBuilder.create()
+                .url("jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName)
+                .username(dbUsername)
+                .password(dbPassword)
+                .driverClassName("com.mysql.cj.jdbc.Driver")
+                .build();
     }
 }
