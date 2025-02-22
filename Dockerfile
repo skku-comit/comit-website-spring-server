@@ -22,3 +22,6 @@ RUN ./gradlew build
 
 # Expose the port the app runs on
 EXPOSE 8080
+
+# Run the Spring Boot application
+ENTRYPOINT ["java", "-jar", "build/libs/comit-server-0.0.1-SNAPSHOT.jar"]
