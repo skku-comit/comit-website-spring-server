@@ -1,16 +1,21 @@
 package com.example.comitserver.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.List;
-
-public class NewUserEntity {
+@Entity
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String userName;
 
     @Column(nullable = false)
@@ -36,17 +41,5 @@ public class NewUserEntity {
 
     @Column
     private String blog;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "semester_id")
-    private List<NewSemesterEntity> semesters;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "team_id")
-    private List<NewTeamEntity> teams;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "course_id")
-    private List<NewCourseEntity> courses;
 
 }
