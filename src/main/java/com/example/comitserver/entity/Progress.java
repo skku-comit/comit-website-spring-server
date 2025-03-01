@@ -13,7 +13,7 @@ public class Progress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long progressId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "study_id")

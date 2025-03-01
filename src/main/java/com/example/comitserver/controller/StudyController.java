@@ -82,8 +82,8 @@ public class StudyController {
             if (studyRequestDTO.getImageSrc() != null) {
                 existingStudy.setImageSrc(studyRequestDTO.getImageSrc());
             }
-            if (studyRequestDTO.getDay() != null) {
-                existingStudy.setDay(studyRequestDTO.getDay());
+            if (studyRequestDTO.getDayOfWeek() != null) {
+                existingStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
             }
             if (studyRequestDTO.getStartTime() != null) {
                 existingStudy.setStartTime(studyRequestDTO.getStartTime());
@@ -97,8 +97,8 @@ public class StudyController {
             if (studyRequestDTO.getStacks() != null) {
                 existingStudy.setStacks(studyRequestDTO.getStacks());
             }
-            if (studyRequestDTO.getCampus() != null) {
-                existingStudy.setCampus(studyRequestDTO.getCampus());
+            if (studyRequestDTO.getLocation() != null) {
+                existingStudy.setLocation(studyRequestDTO.getLocation());
             }
             if (studyRequestDTO.getDescription() != null) {
                 existingStudy.setDescription(studyRequestDTO.getDescription());

@@ -13,7 +13,7 @@ public class SemesterUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long semesterUserId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "semester_id")

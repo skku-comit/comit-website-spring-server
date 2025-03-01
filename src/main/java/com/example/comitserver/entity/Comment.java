@@ -15,7 +15,7 @@ public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "study_id")
@@ -26,9 +26,9 @@ public class Comment {
     private User user;
 
     @Column(nullable = false)
-    private LocalDateTime commentDateTime;
+    private LocalDateTime dateTime;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String commentText;
+    private String text;
 
 }

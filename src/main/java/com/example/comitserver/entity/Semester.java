@@ -15,10 +15,10 @@ public class Semester {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long semesterId;
+    private Long id;
 
     @Column(nullable = false)
-    private String semesterName;
+    private String name;
 
     @Column(nullable = false)
     private LocalDate startDate;

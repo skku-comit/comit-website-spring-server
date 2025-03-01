@@ -13,10 +13,10 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
     @Column(unique = true, nullable = false)
-    private String userName;
+    private String name;
 
     @Column(nullable = false)
     private String fullName;
@@ -34,7 +34,7 @@ public class User {
     private String email;
 
     @Column
-    private String profileImage;
+    private String imageSrc;
 
     @Column
     private String github;

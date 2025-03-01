@@ -13,10 +13,10 @@ public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long teamId;
+    private Long id;
 
     @Column(nullable = false)
-    private String teamName;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

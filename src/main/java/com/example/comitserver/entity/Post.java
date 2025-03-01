@@ -15,7 +15,7 @@ public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "study_id")
@@ -26,12 +26,12 @@ public class Post {
     private User user;
 
     @Column(nullable = false)
-    private LocalDate postDate;
+    private LocalDate date;
 
     @Column(nullable = false)
-    private String postTitle;
+    private String title;
 
     @Column(nullable = false)
-    private String postLink;
+    private String link;
 
 }

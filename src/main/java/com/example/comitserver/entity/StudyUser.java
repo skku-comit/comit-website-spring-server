@@ -13,7 +13,7 @@ public class StudyUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long studyUserId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "study_id")

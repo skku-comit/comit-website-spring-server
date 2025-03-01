@@ -13,7 +13,7 @@ public class TeamUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long teamUserId;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")

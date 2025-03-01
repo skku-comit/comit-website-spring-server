@@ -1,7 +1,7 @@
 package com.example.comitserver.entity;
 
-import com.example.comitserver.entity.enumeration.Campus;
-import com.example.comitserver.entity.enumeration.Day;
+import com.example.comitserver.entity.enumeration.Location;
+import com.example.comitserver.entity.enumeration.DayOfWeek;
 import com.example.comitserver.entity.enumeration.Level;
 import com.example.comitserver.entity.enumeration.Semester;
 import com.example.comitserver.utils.StringListConverter;
@@ -35,7 +35,7 @@ public class StudyEntity extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Day day;
+    private DayOfWeek dayOfWeek;
 
     @Column(nullable = false)
     private String startTime;
@@ -53,7 +53,7 @@ public class StudyEntity extends BaseTimeEntity{
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Campus campus;
+    private Location location;
 
     @Column(nullable = false, length = 800)
     private String description;
