@@ -19,10 +19,6 @@ public class Progress {
     @JoinColumn(name = "study_id")
     private Study study;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
-    private User user;
-
     @Column(nullable = false)
     private Integer week;
 
