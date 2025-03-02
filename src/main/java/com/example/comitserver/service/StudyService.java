@@ -47,12 +47,12 @@ public class StudyService {
         UserEntity mentor = userRepository.findById(customUserDetails.getUserId())
                 .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getUserId()));
         newStudy.setMentor(mentor);
-        newStudy.setDay(studyRequestDTO.getDay());
+        newStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
         newStudy.setStartTime(studyRequestDTO.getStartTime());
         newStudy.setEndTime(studyRequestDTO.getEndTime());
         newStudy.setLevel(studyRequestDTO.getLevel());
         newStudy.setStacks(studyRequestDTO.getStacks());
-        newStudy.setCampus(studyRequestDTO.getCampus());
+        newStudy.setLocation(studyRequestDTO.getLocation());
         newStudy.setDescription(studyRequestDTO.getDescription());
         newStudy.setIsRecruiting(studyRequestDTO.getIsRecruiting());
         newStudy.setSemester(studyRequestDTO.getSemester());
@@ -72,12 +72,12 @@ public class StudyService {
 
         updatingStudy.setTitle(studyRequestDTO.getTitle());
         updatingStudy.setImageSrc(studyRequestDTO.getImageSrc());
-        updatingStudy.setDay(studyRequestDTO.getDay());
+        updatingStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
         updatingStudy.setStartTime(studyRequestDTO.getStartTime());
         updatingStudy.setEndTime(studyRequestDTO.getEndTime());
         updatingStudy.setLevel(studyRequestDTO.getLevel());
         updatingStudy.setStacks(studyRequestDTO.getStacks());
-        updatingStudy.setCampus(studyRequestDTO.getCampus());
+        updatingStudy.setLocation(studyRequestDTO.getLocation());
         updatingStudy.setDescription(studyRequestDTO.getDescription());
         updatingStudy.setIsRecruiting(studyRequestDTO.getIsRecruiting());
         updatingStudy.setSemester(studyRequestDTO.getSemester());

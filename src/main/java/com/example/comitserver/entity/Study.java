@@ -1,51 +1,47 @@
 package com.example.comitserver.entity;
 
-import com.example.comitserver.entity.enumeration.Location;
 import com.example.comitserver.entity.enumeration.DayOfWeek;
+import com.example.comitserver.entity.enumeration.Location;
 import com.example.comitserver.entity.enumeration.Level;
-import com.example.comitserver.entity.enumeration.Semester;
 import com.example.comitserver.utils.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.List;
 
-@EqualsAndHashCode(callSuper = false)
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudyEntity extends BaseTimeEntity{
+public class Study {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false) // 원래 필드명과 db 열 이름이 같으며 안 적어도 되는데 속성이 있어서 적는 거
-    private String title;
+    @ManyToOne(fetch = FetchType.EAGER) // FetchType이 LAZY면 문제가 발생
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
+    @Column(nullable = false) // 원래 필드명과 db 열 이름이 같으면 안 적어도 되는데 속성이 있어서 적는 거
+    private String name;
 
     @Column(nullable = false)
     private String imageSrc;
 
-    @ManyToOne(fetch = FetchType.EAGER) // FetchType이 LAZY면 문제가 발생
-    @JoinColumn(name = "user_id")
-    private UserEntity mentor;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private DayOfWeek dayOfWeek;
-
-    @Column(nullable = false)
-    private String startTime;
-
-    @Column(nullable = false)
-    private String endTime;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Level level;
+
+    @Column(nullable = false)
+    private Integer capacity;
 
     @Convert(converter = StringListConverter.class)
     @Column(nullable = false)
@@ -55,17 +51,21 @@ public class StudyEntity extends BaseTimeEntity{
     @Column(nullable = false)
     private Location location;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DayOfWeek dayOfWeek;
+
+    @Column(nullable = false)
+    private LocalTime startTime;
+
+    @Column(nullable = false)
+    private LocalTime endTime;
+
     @Column(nullable = false, length = 800)
     private String description;
 
-    @Column(nullable = false)
-    private Boolean isRecruiting;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Semester semester;
+    private Status status;
 
-    public void setStacks(List<String> stacks) {
-        this.stacks = (stacks != null) ? stacks : new ArrayList<>();
-    }
 }
