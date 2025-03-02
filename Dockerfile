@@ -4,21 +4,22 @@ FROM openjdk:17-slim
 # Set the working directory inside the container
 WORKDIR /app
 
-# Copy the build.gradle and settings.gradle files
+# Copy the gradle configuration files first
 COPY build.gradle settings.gradle /app/
-
-# Copy the gradle wrapper files
 COPY gradlew /app/
 COPY gradle /app/gradle
 
-# Download the dependencies
-RUN ./gradlew build
+# Make the gradlew executable
+RUN chmod +x ./gradlew
 
-# Copy the project files
-COPY . /app
+# Download dependencies only (using a placeholder main class)
+RUN ./gradlew dependencies --no-daemon
+
+# Now copy the source code
+COPY src /app/src
 
 # Build the application
-RUN ./gradlew build
+RUN ./gradlew build --no-daemon
 
 # Expose the port the app runs on
 EXPOSE 8080
