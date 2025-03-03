@@ -1,12 +1,10 @@
 package com.example.comitserver.service;
 
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.ResourceNotFoundException;
 import com.example.comitserver.repository.CreatedStudyRepository;
 import com.example.comitserver.repository.UserRepository;
-import jakarta.transaction.Transactional;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

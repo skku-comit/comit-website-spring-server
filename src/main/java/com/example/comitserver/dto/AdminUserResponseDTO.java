@@ -1,6 +1,6 @@
 package com.example.comitserver.dto;
 
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import lombok.Data;
 
 @Data

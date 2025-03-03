@@ -1,6 +1,6 @@
 package com.example.comitserver.dto;
 
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

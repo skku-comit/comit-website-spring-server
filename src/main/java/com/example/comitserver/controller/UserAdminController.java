@@ -1,9 +1,8 @@
 package com.example.comitserver.controller;
 
 import com.example.comitserver.dto.AdminUserResponseDTO;
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.entity.UserEntity;
-import com.example.comitserver.exception.ResourceNotFoundException;
 import com.example.comitserver.service.UserAdminService;
 import com.example.comitserver.utils.ResponseUtil;
 import org.modelmapper.ModelMapper;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/admin")

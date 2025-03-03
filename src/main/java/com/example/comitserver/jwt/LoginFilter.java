@@ -2,7 +2,7 @@ package com.example.comitserver.jwt;
 
 import com.example.comitserver.dto.*;
 import com.example.comitserver.entity.RefreshEntity;
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.repository.RefreshRepository;
 import com.example.comitserver.utils.ResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;

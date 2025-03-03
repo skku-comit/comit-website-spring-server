@@ -1,6 +1,6 @@
 package com.example.comitserver.repository;
 
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 

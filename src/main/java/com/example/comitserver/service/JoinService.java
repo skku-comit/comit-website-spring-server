@@ -1,7 +1,7 @@
 package com.example.comitserver.service;
 
 import com.example.comitserver.dto.JoinDTO;
-import com.example.comitserver.entity.Role;
+import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.repository.UserRepository;

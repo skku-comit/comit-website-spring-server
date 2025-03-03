@@ -1,5 +1,7 @@
 package com.example.comitserver.service;
 
+import com.example.comitserver.dto.UserSignUpDTO;
+import com.example.comitserver.entity.UserEntity;
 import com.example.comitserver.repository.NewDepartmentRepository;
 import com.example.comitserver.repository.NewUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,12 @@ public class NewUserService {
         this.newUserRepository = newUserRepository;
         this.newDepartmentRepository = newDepartmentRepository;
     }
+
+    public UserEntity signUp(UserSignUpDTO userSignUpDTO) {
+
+    }
+
+    // 검증 함수들
 
 //    public List<User> showStaff() {
 //        newDepartmentRepository.findByDepartmentName()

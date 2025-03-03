@@ -1,6 +1,6 @@
 package com.example.comitserver.entity.enumeration;
 
-public enum NewRole {
+public enum Department {
     STAFF,
     DEVELOPER,
     NONE
