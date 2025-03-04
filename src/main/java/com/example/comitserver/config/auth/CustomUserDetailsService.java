@@ -1,8 +1,7 @@
-package com.example.comitserver.service;
+package com.example.comitserver.config.auth;
 
-import com.example.comitserver.dto.CustomUserDetails;
-import com.example.comitserver.entity.UserEntity;
-import com.example.comitserver.repository.UserRepository;
+import com.example.comitserver.entity.User;
+import com.example.comitserver.repository.NewUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -10,22 +9,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final NewUserRepository newUserRepository;
 
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public CustomUserDetailsService(NewUserRepository newUserRepository) {
+        this.newUserRepository = newUserRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(email)
+        User user = newUserRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        return new CustomUserDetails(userEntity);
+        return new CustomUserDetails(user);
     }
 
     public UserDetails loadUserById(Long id) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findById(id)
+        User user = newUserRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
-        return new CustomUserDetails(userEntity);
+        return new CustomUserDetails(user);
     }
 }

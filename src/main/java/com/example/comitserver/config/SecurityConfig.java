@@ -1,13 +1,12 @@
 package com.example.comitserver.config;
 
-import com.example.comitserver.jwt.CustomLogoutFilter;
-import com.example.comitserver.jwt.JWTFilter;
-import com.example.comitserver.jwt.JWTUtil;
-import com.example.comitserver.jwt.LoginFilter;
+import com.example.comitserver.config.jwt.CustomLogoutFilter;
+import com.example.comitserver.config.jwt.JWTFilter;
+import com.example.comitserver.config.jwt.JWTUtil;
+import com.example.comitserver.config.jwt.LoginFilter;
 import com.example.comitserver.repository.RefreshRepository;
-import com.example.comitserver.service.CustomUserDetailsService;
+import com.example.comitserver.config.auth.CustomUserDetailsService;
 import com.example.comitserver.utils.CustomAccessDeniedHandler;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,10 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity

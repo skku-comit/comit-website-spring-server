@@ -1,4 +1,4 @@
-package com.example.comitserver.jwt;
+package com.example.comitserver.config.jwt;
 
 import com.example.comitserver.repository.RefreshRepository;
 import com.example.comitserver.utils.ResponseUtil;

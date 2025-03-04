@@ -1,5 +1,6 @@
-package com.example.comitserver.jwt;
+package com.example.comitserver.config.jwt;
 
+import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.*;
 import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.entity.enumeration.Role;
@@ -40,27 +41,27 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        LoginDTO loginDTO;
+        UserLoginDTO userLoginDTO;
 
         try {
             ServletInputStream inputStream = request.getInputStream();
             String messageBody = StreamUtils.copyToString(inputStream, StandardCharsets.UTF_8);
-            loginDTO = objectMapper.readValue(messageBody, LoginDTO.class);
+            userLoginDTO = objectMapper.readValue(messageBody, UserLoginDTO.class);
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse login request", e);
         }
 
-        String email = loginDTO.getEmail();
-        String password = loginDTO.getPassword();
+        String name = userLoginDTO.getName();
+        String password = userLoginDTO.getPassword();
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(name, password);
         return authenticationManager.authenticate(authToken);
     }
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        Long userId = userDetails.getUserId();
+        Long userId = userDetails.getId();
         String username = userDetails.getUsername();
         Role role = userDetails.getRole();
 

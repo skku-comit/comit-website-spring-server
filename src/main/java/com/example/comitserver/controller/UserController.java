@@ -1,6 +1,6 @@
 package com.example.comitserver.controller;
 
-import com.example.comitserver.dto.CustomUserDetails;
+import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.StudyResponseDTO;
 import com.example.comitserver.dto.UserRequestDTO;
 import com.example.comitserver.dto.UserResponseDTO;
@@ -41,7 +41,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = ((CustomUserDetails) userDetails).getUserId();
+        Long userId = ((CustomUserDetails) userDetails).getId();
         UserEntity user = userService.getUserProfile(userId);
         UserResponseDTO userDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
@@ -49,7 +49,7 @@ public class UserController {
 
     @PatchMapping("/profile")
     public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserRequestDTO userDTO) {
-        Long userId = ((CustomUserDetails) userDetails).getUserId();
+        Long userId = ((CustomUserDetails) userDetails).getId();
         UserEntity user = userService.getUserProfile(userId);
         userService.updateUserProfile(userId, userDTO);
         UserResponseDTO updatedUserDTO = modelMapper.map(user, UserResponseDTO.class);
@@ -58,7 +58,7 @@ public class UserController {
 
     @DeleteMapping("/profile")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = ((CustomUserDetails) userDetails).getUserId();
+        Long userId = ((CustomUserDetails) userDetails).getId();
         UserEntity user = userService.getUserProfile(userId);
         boolean deleted = userService.deleteUser(userId);
 
@@ -74,7 +74,7 @@ public class UserController {
 
     @GetMapping("/profile/studies-created")
     public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = ((CustomUserDetails) userDetails).getUserId();
+        Long userId = ((CustomUserDetails) userDetails).getId();
         List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
         List<StudyResponseDTO> studyDTOs = createdStudies.stream().map(entity -> modelMapper.map(entity, StudyResponseDTO.class)).toList();
         return ResponseUtil.createSuccessResponse(studyDTOs, HttpStatus.OK);

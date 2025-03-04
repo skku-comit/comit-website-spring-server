@@ -1,7 +1,7 @@
-package com.example.comitserver.dto;
+package com.example.comitserver.config.auth;
 
+import com.example.comitserver.entity.User;
 import com.example.comitserver.entity.enumeration.Role;
-import com.example.comitserver.entity.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class CustomUserDetails implements UserDetails {
-    private final UserEntity userEntity;
+    private final User user;
 
-    public CustomUserDetails(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public CustomUserDetails(User user) {
+        this.user = user;
     }
 
     @Override
@@ -22,29 +22,29 @@ public class CustomUserDetails implements UserDetails {
         collection.add(new GrantedAuthority() {
             @Override
             public String getAuthority() {
-                return userEntity.getRole().toString();
+                return user.getRole().toString();
             }
         });
 
         return collection;
     }
 
-    public Long getUserId() {
-        return userEntity.getId();
+    public Long getId() {
+        return user.getId();
     }
 
     @Override
     public String getPassword() {
-        return userEntity.getPassword();
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return userEntity.getUsername();
+        return user.getName();
     }
 
     public Role getRole() {
-        return userEntity.getRole();
+        return user.getRole();
     }
 
 

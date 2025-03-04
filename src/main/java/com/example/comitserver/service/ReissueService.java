@@ -1,7 +1,7 @@
 package com.example.comitserver.service;
 
 import com.example.comitserver.entity.RefreshEntity;
-import com.example.comitserver.jwt.JWTUtil;
+import com.example.comitserver.config.jwt.JWTUtil;
 import com.example.comitserver.repository.RefreshRepository;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.Cookie;

@@ -1,6 +1,6 @@
 package com.example.comitserver.controller;
 
-import com.example.comitserver.jwt.JWTUtil;
+import com.example.comitserver.config.jwt.JWTUtil;
 import com.example.comitserver.service.ReissueService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;

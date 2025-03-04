@@ -1,6 +1,5 @@
 package com.example.comitserver.controller;
 
-import com.example.comitserver.dto.CustomUserDetails;
 import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.dto.StudyResponseDTO;
@@ -11,7 +10,6 @@ import com.example.comitserver.utils.ResponseUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
