@@ -1,4 +1,4 @@
-package com.example.comitserver.jwt;
+package com.example.comitserver.config.jwt;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;

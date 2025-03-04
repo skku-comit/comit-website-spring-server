@@ -1,6 +1,6 @@
 package com.example.comitserver.service;
 
-import com.example.comitserver.dto.CustomUserDetails;
+import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.entity.CreatedStudyEntity;
 import com.example.comitserver.entity.StudyEntity;
@@ -44,8 +44,8 @@ public class StudyService {
         newStudy.setTitle(studyRequestDTO.getTitle());
         newStudy.setImageSrc(studyRequestDTO.getImageSrc());
         // Get the mentor (user) from the repository using the user ID from the customUserDetails
-        UserEntity mentor = userRepository.findById(customUserDetails.getUserId())
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getUserId()));
+        UserEntity mentor = userRepository.findById(customUserDetails.getId())
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getId()));
         newStudy.setMentor(mentor);
         newStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
         newStudy.setStartTime(studyRequestDTO.getStartTime());
@@ -95,7 +95,7 @@ public class StudyService {
     public Boolean identification(Long id, CustomUserDetails customUserDetails) {
         StudyEntity study = showStudy(id);
         Long mentorId = study.getMentor().getId();
-        Long requesterId = customUserDetails.getUserId();
+        Long requesterId = customUserDetails.getId();
         return Objects.equals(requesterId, mentorId);
     }
 }

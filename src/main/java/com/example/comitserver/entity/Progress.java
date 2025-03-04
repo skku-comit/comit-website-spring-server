@@ -1,5 +1,6 @@
 package com.example.comitserver.entity;
 
+import com.example.comitserver.entity.enumeration.Status;
 import jakarta.persistence.*;
 import lombok.*;
 

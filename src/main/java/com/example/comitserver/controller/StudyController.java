@@ -1,6 +1,6 @@
 package com.example.comitserver.controller;
 
-import com.example.comitserver.dto.CustomUserDetails;
+import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.dto.StudyResponseDTO;

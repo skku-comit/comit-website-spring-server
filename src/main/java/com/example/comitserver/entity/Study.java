@@ -1,8 +1,6 @@
 package com.example.comitserver.entity;
 
-import com.example.comitserver.entity.enumeration.DayOfWeek;
-import com.example.comitserver.entity.enumeration.Location;
-import com.example.comitserver.entity.enumeration.Level;
+import com.example.comitserver.entity.enumeration.*;
 import com.example.comitserver.utils.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
