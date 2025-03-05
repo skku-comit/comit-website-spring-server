@@ -10,9 +10,11 @@ import lombok.Data;
 public class SignupRequestDTO {
 
     @NotBlank(message = "Name(ID) is required.")
+    @Size(min = 3, max = 20, message = "Name(ID) must be between 3 and 20 characters.")
     private String name;
 
     @NotBlank(message = "Full name is required.")
+    @Size(min = 2, max = 10, message = "FullName must be between 2 and 10 characters.")
     private String fullName;
 
     @NotBlank(message = "Password is required.")

@@ -5,7 +5,9 @@ import com.example.comitserver.dto.StudyResponseDTO;
 import com.example.comitserver.dto.UserRequestDTO;
 import com.example.comitserver.dto.UserResponseDTO;
 import com.example.comitserver.entity.StudyEntity;
+import com.example.comitserver.entity.User;
 import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.service.NewUserService;
 import com.example.comitserver.service.UserService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -23,35 +25,35 @@ import java.util.List;
 @RequestMapping("/api")
 public class UserController {
 
-    private final UserService userService;
+    private final NewUserService newUserService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(UserService userService, ModelMapper modelMapper) {
-        this.userService = userService;
+    public UserController(NewUserService newUserService, ModelMapper modelMapper) {
+        this.newUserService = newUserService;
         this.modelMapper = modelMapper;
     }
 
-    @GetMapping("/staffs")
-    public ResponseEntity<?> getAllStaffProfiles() {
-        List<UserEntity> users = userService.getAllUsersByStaffStatus(true);
-        List<UserResponseDTO> userDTOs = users.stream().map(entity -> modelMapper.map(entity, UserResponseDTO.class)).toList();
-        return ResponseUtil.createSuccessResponse(userDTOs, HttpStatus.OK);
-    }
+//    @GetMapping("/staffs")
+//    public ResponseEntity<?> getAllStaffProfiles() {
+//        List<UserEntity> users = userService.getAllUsersByStaffStatus(true);
+//        List<UserResponseDTO> userDTOs = users.stream().map(entity -> modelMapper.map(entity, UserResponseDTO.class)).toList();
+//        return ResponseUtil.createSuccessResponse(userDTOs, HttpStatus.OK);
+//    }
 
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getId();
-        UserEntity user = userService.getUserProfile(userId);
+        User user = newUserService.showProfile(userId);
         UserResponseDTO userDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/profile")
-    public ResponseEntity<?> updateUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserRequestDTO userDTO) {
+    public ResponseEntity<?> patchUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserRequestDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getId();
-        UserEntity user = userService.getUserProfile(userId);
-        userService.updateUserProfile(userId, userDTO);
+        User user = newUserService.showProfile(userId);
+        newUserService.updateProfile(userId, userDTO);
         UserResponseDTO updatedUserDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(updatedUserDTO, HttpStatus.OK);
     }
@@ -59,8 +61,8 @@ public class UserController {
     @DeleteMapping("/profile")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getId();
-        UserEntity user = userService.getUserProfile(userId);
-        boolean deleted = userService.deleteUser(userId);
+        User user = newUserService.showProfile(userId);
+        boolean deleted = newUserService.deleteUser(userId);
 
         // 삭제 실패 시, Internal Server Error 응답 반환
         if (!deleted) {
@@ -72,11 +74,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/profile/studies-created")
-    public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
-        Long userId = ((CustomUserDetails) userDetails).getId();
-        List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
-        List<StudyResponseDTO> studyDTOs = createdStudies.stream().map(entity -> modelMapper.map(entity, StudyResponseDTO.class)).toList();
-        return ResponseUtil.createSuccessResponse(studyDTOs, HttpStatus.OK);
-    }
+//    @GetMapping("/profile/studies-created")
+//    public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
+//        Long userId = ((CustomUserDetails) userDetails).getId();
+//        List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
+//        List<StudyResponseDTO> studyDTOs = createdStudies.stream().map(entity -> modelMapper.map(entity, StudyResponseDTO.class)).toList();
+//        return ResponseUtil.createSuccessResponse(studyDTOs, HttpStatus.OK);
+//    }
 }
