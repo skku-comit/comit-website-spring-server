@@ -9,6 +9,7 @@ import com.example.comitserver.entity.User;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.repository.RefreshRepository;
 import com.example.comitserver.service.NewUserService;
+import com.example.comitserver.service.auth.AuthService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,15 +28,15 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/api")
-public class NewUserController {
-    private final NewUserService newUserService;
+public class AuthController {
+    private final AuthService authService;
     private final ModelMapper modelMapper;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
 
     @Autowired
-    public NewUserController(NewUserService newUserService, ModelMapper modelMapper, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
-        this.newUserService = newUserService;
+    public AuthController(AuthService authService, ModelMapper modelMapper, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
+        this.authService = authService;
         this.modelMapper = modelMapper;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
@@ -43,7 +44,7 @@ public class NewUserController {
 
     @PostMapping("/join")
     public ResponseEntity<?> postUser(@RequestBody @Valid SignupRequestDTO signupRequestDTO, HttpServletResponse response) {
-        User newUser = newUserService.signUp(signupRequestDTO);
+        User newUser = authService.signUp(signupRequestDTO);
         SignupResponseDTO userDTO = modelMapper.map(newUser, SignupResponseDTO.class);
 
         URI location = ServletUriComponentsBuilder
