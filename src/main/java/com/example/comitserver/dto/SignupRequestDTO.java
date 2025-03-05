@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class UserSignupDTO {
+public class SignupRequestDTO {
 
     @NotBlank(message = "Name(ID) is required.")
     private String name;

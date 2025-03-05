@@ -1,6 +1,6 @@
 package com.example.comitserver.config.jwt;
 
-import com.example.comitserver.config.auth.CustomUserDetailsService;
+import com.example.comitserver.service.auth.CustomUserDetailsService;
 import com.example.comitserver.utils.ResponseUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
