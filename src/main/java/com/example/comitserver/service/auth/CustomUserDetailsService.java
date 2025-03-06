@@ -1,5 +1,6 @@
-package com.example.comitserver.config.auth;
+package com.example.comitserver.service.auth;
 
+import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.entity.User;
 import com.example.comitserver.repository.NewUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

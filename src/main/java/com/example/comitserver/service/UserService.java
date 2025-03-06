@@ -76,18 +76,14 @@ public class UserService {
         if (userDTO.getEmail() != null) {
             user.setEmail(userDTO.getEmail());
         }
-        if (userDTO.getBio() != null) {
-            user.setBio(userDTO.getBio());
-        }
+
         if (userDTO.getGithub() != null) {
             user.setGithub(userDTO.getGithub());
         }
         if (userDTO.getBlog() != null) {
             user.setBlog(userDTO.getBlog());
         }
-        if (userDTO.getProfileImage() != null) {
-            user.setProfileImage(userDTO.getProfileImage());
-        }
+
     }
 
     public boolean deleteUser(Long userId) {

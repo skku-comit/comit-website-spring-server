@@ -8,8 +8,11 @@ import lombok.Data;
 @Data
 public class UserRequestDTO {
     // field validity check (임시)
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters.")
-    private String username;
+    @Size(min = 3, max = 20, message = "Name(ID) must be between 3 and 20 characters.")
+    private String name;
+
+    @Size(min = 2, max = 10, message = "FullName must be between 2 and 10 characters.")
+    private String fullName;
 
     @Pattern(regexp = "\\d{10,15}", message = "Phone number must contain only digits and be between 10 and 15 digits long.")
     private String phoneNumber;
@@ -20,8 +23,8 @@ public class UserRequestDTO {
     @Email(message = "Please enter a valid email address.")
     private String email;
 
-    @Size(max = 255, message = "Bio must be less than 255 characters.")
-    private String bio;
+    @Pattern(regexp = "^(https?://).+", message = "Please enter a valid profile image URL.")
+    private String imageSrc;
 
     @Pattern(regexp = "^(https://github.com/).+", message = "Please enter a valid GitHub URL.")
     private String github;
@@ -29,6 +32,4 @@ public class UserRequestDTO {
     @Pattern(regexp = "^(https?://).+", message = "Please enter a valid blog URL.")
     private String blog;
 
-    @Pattern(regexp = "^(https?://).+", message = "Please enter a valid profile image URL.")
-    private String profileImage;
 }
