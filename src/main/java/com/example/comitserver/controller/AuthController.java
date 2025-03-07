@@ -42,7 +42,7 @@ public class AuthController {
         this.refreshRepository = refreshRepository;
     }
 
-    @PostMapping("/join")
+    @PostMapping("/signup")
     public ResponseEntity<?> postUser(@RequestBody @Valid SignupRequestDTO signupRequestDTO, HttpServletResponse response) {
         User newUser = authService.signUp(signupRequestDTO);
         SignupResponseDTO userDTO = modelMapper.map(newUser, SignupResponseDTO.class);
