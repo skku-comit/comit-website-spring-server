@@ -73,8 +73,8 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests((auth) -> auth
-                        // /login, /join, /logout, /reissue 경로는 모든 사용자에게 열어둠
-                        .requestMatchers("/api/login", "/api/join", "/api/logout", "/api/reissue").permitAll()
+                        // /login, /signup, /logout, /reissue 경로는 모든 사용자에게 열어둠
+                        .requestMatchers("/api/login", "/api/signup", "/api/logout", "/api/reissue").permitAll()
                         // /admin 경로는 ADMIN 역할만 접근 가능
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         // /admin 외의 GET PATCH PUT 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
