@@ -76,7 +76,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         Map<String, Object> user = new HashMap<>();
         user.put("id", userId);
-        user.put("user", username);
+        user.put("name", username);
         user.put("role", role);
 
         ResponseUtil.createFilterSuccessResponse(response, user, HttpStatus.OK);
