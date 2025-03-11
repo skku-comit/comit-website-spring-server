@@ -79,17 +79,39 @@ public class StudyService {
     public Study updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
         Study updatingStudy = showStudy(id);
 
-        updatingStudy.setName(studyRequestDTO.getName());
-        updatingStudy.setImageSrc(studyRequestDTO.getImageSrc());
-        updatingStudy.setLevel(studyRequestDTO.getLevel());
-        updatingStudy.setCapacity(studyRequestDTO.getCapacity());
-        updatingStudy.setStacks(studyRequestDTO.getStacks());
-        updatingStudy.setLocation(studyRequestDTO.getLocation());
-        updatingStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
-        updatingStudy.setStartTime(stringToLocalTime(studyRequestDTO.getStartTime()));
-        updatingStudy.setEndTime(stringToLocalTime(studyRequestDTO.getEndTime()));
-        updatingStudy.setDescription(studyRequestDTO.getDescription());
-        updatingStudy.setStatus(studyRequestDTO.getStatus());
+        if (studyRequestDTO.getName() != null) {
+            updatingStudy.setName(studyRequestDTO.getName());
+        }
+        if (studyRequestDTO.getImageSrc() != null) {
+            updatingStudy.setImageSrc(studyRequestDTO.getImageSrc());
+        }
+        if (studyRequestDTO.getLevel() != null) {
+            updatingStudy.setLevel(studyRequestDTO.getLevel());
+        }
+        if (studyRequestDTO.getCapacity() != null) {
+            updatingStudy.setCapacity(studyRequestDTO.getCapacity());
+        }
+        if (studyRequestDTO.getStacks() != null) {
+            updatingStudy.setStacks(studyRequestDTO.getStacks());
+        }
+        if (studyRequestDTO.getLocation() != null) {
+            updatingStudy.setLocation(studyRequestDTO.getLocation());
+        }
+        if (studyRequestDTO.getDayOfWeek() != null) {
+            updatingStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
+        }
+        if (studyRequestDTO.getStartTime() != null) {
+            updatingStudy.setStartTime(stringToLocalTime(studyRequestDTO.getStartTime()));
+        }
+        if (studyRequestDTO.getEndTime() != null) {
+            updatingStudy.setEndTime(stringToLocalTime(studyRequestDTO.getEndTime()));
+        }
+        if (studyRequestDTO.getDescription() != null) {
+            updatingStudy.setDescription(studyRequestDTO.getDescription());
+        }
+        if (studyRequestDTO.getStatus() != null) {
+            updatingStudy.setStatus(studyRequestDTO.getStatus());
+        }
         studyRepository.save(updatingStudy);
 
         return updatingStudy;
