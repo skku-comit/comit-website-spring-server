@@ -20,17 +20,15 @@ import java.util.Objects;
 public class StudyService {
 
     private final StudyRepository studyRepository;
-    private final NewUserRepository newUserRepository;
+    private final UserRepository userRepository;
     private final StudyUserRepository studyUserRepository;
     private final SemesterRepository semesterRepository;
-    private final UserRepository userRepository;
 
-    public StudyService(StudyRepository studyRepository, NewUserRepository newUserRepository, StudyUserRepository studyUserRepository, SemesterRepository semesterRepository, UserRepository userRepository) {
+    public StudyService(StudyRepository studyRepository, UserRepository userRepository, StudyUserRepository studyUserRepository, SemesterRepository semesterRepository) {
         this.studyRepository = studyRepository;
-        this.newUserRepository = newUserRepository;
+        this.userRepository = userRepository;
         this.studyUserRepository = studyUserRepository;
         this.semesterRepository = semesterRepository;
-        this.userRepository = userRepository;
     }
 
     public List<Study> showAllStudies() {
@@ -63,7 +61,7 @@ public class StudyService {
                 .build();
         studyRepository.save(newStudy);
 
-        User leader = newUserRepository.findById(customUserDetails.getId())
+        User leader = userRepository.findById(customUserDetails.getId())
                 .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getId()));
         StudyUser newStudyUser = StudyUser.builder()
                 .study(newStudy)

@@ -3,7 +3,7 @@ package com.example.comitserver.controller;
 import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.dto.StudyResponseDTO;
-import com.example.comitserver.entity.StudyEntity;
+import com.example.comitserver.entity.Study;
 import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.service.StudyService;
 import com.example.comitserver.utils.ResponseUtil;
@@ -33,7 +33,7 @@ public class StudyAdminController {
 
     @GetMapping("/studies")
     public ResponseEntity<ServerResponseDTO> getStudies() {
-        List<StudyEntity> allStudies = studyService.showAllStudies();
+        List<Study> allStudies = studyService.showAllStudies();
         List<StudyResponseDTO> allStudiesDTO = allStudies.stream().map(entity -> modelMapper.map(entity, StudyResponseDTO.class)).collect(Collectors.toList());
 
         return ResponseUtil.createSuccessResponse(allStudiesDTO, HttpStatus.OK);
@@ -44,7 +44,7 @@ public class StudyAdminController {
     public ResponseEntity<ServerResponseDTO> getStudyById(@PathVariable Long id) {
         if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
 
-        StudyEntity study = studyService.showStudy(id);
+        Study study = studyService.showStudy(id);
 
         return ResponseUtil.createSuccessResponse(study, HttpStatus.OK);
         //return ResponseEntity.ok(modelMapper.map(study, StudyResponseDTO.class));
@@ -55,7 +55,7 @@ public class StudyAdminController {
         if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
 
 
-        StudyEntity updatedStudy = studyService.updateStudy(id, studyRequestDTO);
+        Study updatedStudy = studyService.updateStudy(id, studyRequestDTO);
 
         if (updatedStudy == null) {
             return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "the result of updating study is null");
@@ -67,27 +67,12 @@ public class StudyAdminController {
 
     }
 
-    @PatchMapping("/studies/{id}")
-    public ResponseEntity<ServerResponseDTO> patchIsRecruiting(@PathVariable Long id, @RequestBody Map<String, Boolean> body) {
-        if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
-
-        StudyEntity study = studyService.showStudy(id);
-        study.setIsRecruiting(body.get("isRecruiting"));
-        studyRepository.save(study);
-
-        Map<String, Boolean> isRecruiting = new HashMap<>();
-        isRecruiting.put("isRecruiting", study.getIsRecruiting());
-
-        return ResponseUtil.createSuccessResponse(isRecruiting, HttpStatus.OK);
-
-    }
-
     @DeleteMapping("/studies/{id}")
     public ResponseEntity<ServerResponseDTO> deleteStudy(@PathVariable Long id) {
         if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
 
 
-        StudyEntity deletedStudy = studyService.showStudy(id);
+        Study deletedStudy = studyService.showStudy(id);
         StudyResponseDTO studyResponseDTO = modelMapper.map(deletedStudy, StudyResponseDTO.class);
 
         studyService.deleteStudy(id);

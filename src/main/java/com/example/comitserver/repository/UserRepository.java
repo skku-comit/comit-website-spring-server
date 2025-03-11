@@ -1,28 +1,22 @@
 package com.example.comitserver.repository;
 
-import com.example.comitserver.entity.enumeration.Role;
-import com.example.comitserver.entity.UserEntity;
+import com.example.comitserver.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<UserEntity, Integer> {
-    Optional<UserEntity> findById(Long id);
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<UserEntity> findByUsername(String username);
+    Optional<User> findById(Long id);
 
-    List<UserEntity> findByIsStaff(Boolean isStaff);
+    Boolean existsByName(String username);
 
-    List<UserEntity> findByRole(Role role);
+    Boolean existsByPhoneNumber(String PhoneNumber);
 
-    List<UserEntity> findByRoleAndIsStaff(Role role, Boolean isStaff);
-
-    Optional<UserEntity> findByEmail(String email);
+    Boolean existsByStudentId(String studentId);
 
     Boolean existsByEmail(String email);
 
-    Boolean existsByPhoneNumber(String phoneNumber);
+    Optional<User> findByName(String name);
 
-    Boolean existsByStudentId(String studentId);
 }

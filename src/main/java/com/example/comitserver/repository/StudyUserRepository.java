@@ -8,6 +8,8 @@ import java.util.List;
 public interface StudyUserRepository extends JpaRepository<StudyUser, Long> {
     List<StudyUser> findByStudyId(Long studyId);
 
+    List<StudyUser> findByUserId(Long userId);
+
     void deleteByStudyId(Long studyId);
 
     void deleteByUserId(Long userId);

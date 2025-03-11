@@ -5,7 +5,6 @@ import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.dto.StudyResponseDTO;
 import com.example.comitserver.entity.Study;
-import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.repository.StudyRepository;
 import com.example.comitserver.service.StudyService;
 import com.example.comitserver.utils.ResponseUtil;
