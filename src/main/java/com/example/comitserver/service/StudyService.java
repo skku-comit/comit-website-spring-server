@@ -2,15 +2,15 @@ package com.example.comitserver.service;
 
 import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
-import com.example.comitserver.entity.CreatedStudyEntity;
-import com.example.comitserver.entity.StudyEntity;
-import com.example.comitserver.entity.UserEntity;
-import com.example.comitserver.repository.CreatedStudyRepository;
-import com.example.comitserver.repository.StudyRepository;
-import com.example.comitserver.repository.UserRepository;
+import com.example.comitserver.entity.*;
+import com.example.comitserver.entity.enumeration.Position;
+import com.example.comitserver.entity.enumeration.Status;
+import com.example.comitserver.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -20,82 +20,104 @@ import java.util.Objects;
 public class StudyService {
 
     private final StudyRepository studyRepository;
+    private final NewUserRepository newUserRepository;
+    private final StudyUserRepository studyUserRepository;
+    private final SemesterRepository semesterRepository;
     private final UserRepository userRepository;
-    private final CreatedStudyRepository createdStudyRepository;
 
-    public StudyService(StudyRepository studyRepository, UserRepository userRepository, CreatedStudyRepository createdStudyRepository) {
+    public StudyService(StudyRepository studyRepository, NewUserRepository newUserRepository, StudyUserRepository studyUserRepository, SemesterRepository semesterRepository, UserRepository userRepository) {
         this.studyRepository = studyRepository;
+        this.newUserRepository = newUserRepository;
+        this.studyUserRepository = studyUserRepository;
+        this.semesterRepository = semesterRepository;
         this.userRepository = userRepository;
-        this.createdStudyRepository = createdStudyRepository;
     }
 
-    public List<StudyEntity> showAllStudies() {
+    public List<Study> showAllStudies() {
         return studyRepository.findAll();
     }
 
-    public StudyEntity showStudy(Long id) {
+    public Study showStudy(Long id) {
         return studyRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Study not found with id: " + id));
     }
 
-    public StudyEntity createStudy(StudyRequestDTO studyRequestDTO, CustomUserDetails customUserDetails) {
-        StudyEntity newStudy = new StudyEntity();
+    public Study createStudy(StudyRequestDTO studyRequestDTO, CustomUserDetails customUserDetails) {
 
-        newStudy.setTitle(studyRequestDTO.getTitle());
-        newStudy.setImageSrc(studyRequestDTO.getImageSrc());
-        // Get the mentor (user) from the repository using the user ID from the customUserDetails
-        UserEntity mentor = userRepository.findById(customUserDetails.getId())
-                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getId()));
-        newStudy.setMentor(mentor);
-        newStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
-        newStudy.setStartTime(studyRequestDTO.getStartTime());
-        newStudy.setEndTime(studyRequestDTO.getEndTime());
-        newStudy.setLevel(studyRequestDTO.getLevel());
-        newStudy.setStacks(studyRequestDTO.getStacks());
-        newStudy.setLocation(studyRequestDTO.getLocation());
-        newStudy.setDescription(studyRequestDTO.getDescription());
-        newStudy.setIsRecruiting(studyRequestDTO.getIsRecruiting());
-        newStudy.setSemester(studyRequestDTO.getSemester());
+        Semester semester = semesterRepository.findById(studyRequestDTO.getSemesterId())
+                .orElseThrow(() -> new NoSuchElementException("Semester not found with id: " + studyRequestDTO.getSemesterId()));
+
+        Study newStudy = Study.builder()
+                .semester(semester)
+                .name(studyRequestDTO.getName())
+                .imageSrc(studyRequestDTO.getImageSrc())
+                .level(studyRequestDTO.getLevel())
+                .capacity(studyRequestDTO.getCapacity())
+                .stacks(studyRequestDTO.getStacks())
+                .location(studyRequestDTO.getLocation())
+                .dayOfWeek(studyRequestDTO.getDayOfWeek())
+                .startTime(stringToLocalTime(studyRequestDTO.getStartTime()))
+                .endTime(stringToLocalTime(studyRequestDTO.getEndTime()))
+                .description(studyRequestDTO.getDescription())
+                .status(Status.NOT_STARTED)
+                .build();
         studyRepository.save(newStudy);
 
-        CreatedStudyEntity createdStudy = new CreatedStudyEntity();
-        createdStudy.setUser(mentor);
-        createdStudy.setStudy(newStudy);
-        createdStudyRepository.save(createdStudy);
+        User leader = newUserRepository.findById(customUserDetails.getId())
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getId()));
+        StudyUser newStudyUser = StudyUser.builder()
+                .study(newStudy)
+                .user(leader)
+                .position(Position.LEADER)
+                .build();
+        studyUserRepository.save(newStudyUser);
 
         return newStudy;
 
     }
 
-    public StudyEntity updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
-        StudyEntity updatingStudy = showStudy(id);
+    public Study updateStudy(Long id, StudyRequestDTO studyRequestDTO) {
+        Study updatingStudy = showStudy(id);
 
-        updatingStudy.setTitle(studyRequestDTO.getTitle());
+        updatingStudy.setName(studyRequestDTO.getName());
         updatingStudy.setImageSrc(studyRequestDTO.getImageSrc());
-        updatingStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
-        updatingStudy.setStartTime(studyRequestDTO.getStartTime());
-        updatingStudy.setEndTime(studyRequestDTO.getEndTime());
         updatingStudy.setLevel(studyRequestDTO.getLevel());
+        updatingStudy.setCapacity(studyRequestDTO.getCapacity());
         updatingStudy.setStacks(studyRequestDTO.getStacks());
         updatingStudy.setLocation(studyRequestDTO.getLocation());
+        updatingStudy.setDayOfWeek(studyRequestDTO.getDayOfWeek());
+        updatingStudy.setStartTime(stringToLocalTime(studyRequestDTO.getStartTime()));
+        updatingStudy.setEndTime(stringToLocalTime(studyRequestDTO.getEndTime()));
         updatingStudy.setDescription(studyRequestDTO.getDescription());
-        updatingStudy.setIsRecruiting(studyRequestDTO.getIsRecruiting());
-        updatingStudy.setSemester(studyRequestDTO.getSemester());
+        updatingStudy.setStatus(studyRequestDTO.getStatus());
         studyRepository.save(updatingStudy);
 
         return updatingStudy;
     }
 
     public void deleteStudy(Long id) {
-        createdStudyRepository.deleteByStudyId(id);
-        StudyEntity deletingStudy = showStudy(id);
+        studyUserRepository.deleteByStudyId(id);
+        Study deletingStudy = showStudy(id);
         studyRepository.delete(deletingStudy);
     }
 
     public Boolean identification(Long id, CustomUserDetails customUserDetails) {
-        StudyEntity study = showStudy(id);
-        Long mentorId = study.getMentor().getId();
+        Long leaderId = -1L;
+        List<StudyUser> studyUsers = studyUserRepository.findByStudyId(id);
+        for (StudyUser studyUser : studyUsers) {
+            if (studyUser.getPosition() == Position.LEADER) {
+                leaderId = studyUser.getUser().getId();
+                break;
+            }
+        }
+        if (leaderId == -1L) return false;
         Long requesterId = customUserDetails.getId();
-        return Objects.equals(requesterId, mentorId);
+        return Objects.equals(requesterId, leaderId);
+    }
+
+    public LocalTime stringToLocalTime(String time) {
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        LocalTime localTime = LocalTime.parse(time, timeFormatter);
+        return localTime;
     }
 }
