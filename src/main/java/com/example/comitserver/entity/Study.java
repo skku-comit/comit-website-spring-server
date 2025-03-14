@@ -24,10 +24,6 @@ public class Study {
     @JoinColumn(name = "semester_id")
     private Semester semester;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Category category;
-
     @Column(nullable = false) // 원래 필드명과 db 열 이름이 같으면 안 적어도 되는데 속성이 있어서 적는 거
     private String name;
 

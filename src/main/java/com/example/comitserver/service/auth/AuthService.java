@@ -4,30 +4,30 @@ import com.example.comitserver.dto.SignupRequestDTO;
 import com.example.comitserver.entity.User;
 import com.example.comitserver.entity.enumeration.Role;
 import com.example.comitserver.exception.DuplicateResourceException;
-import com.example.comitserver.repository.NewUserRepository;
+import com.example.comitserver.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    private final NewUserRepository newUserRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public AuthService(NewUserRepository newUserRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.newUserRepository = newUserRepository;
+    public AuthService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public User signUp(SignupRequestDTO signUpRequestDTO) {
-        if (newUserRepository.existsByEmail(signUpRequestDTO.getEmail())) {
+        if (userRepository.existsByEmail(signUpRequestDTO.getEmail())) {
             throw new DuplicateResourceException("Email is already in use.");
         }
-        if (newUserRepository.existsByStudentId(signUpRequestDTO.getStudentId())) {
+        if (userRepository.existsByStudentId(signUpRequestDTO.getStudentId())) {
             throw new DuplicateResourceException("Student ID is already in use.");
         }
-        if (newUserRepository.existsByPhoneNumber(signUpRequestDTO.getPhoneNumber())) {
+        if (userRepository.existsByPhoneNumber(signUpRequestDTO.getPhoneNumber())) {
             throw new DuplicateResourceException("Phone number is already in use.");
         }
 
@@ -48,7 +48,7 @@ public class AuthService {
             newUser.setBlog(signUpRequestDTO.getBlog());
         }
 
-        newUserRepository.save(newUser);
+        userRepository.save(newUser);
         return newUser;
     }
 

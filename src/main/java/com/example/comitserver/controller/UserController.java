@@ -1,13 +1,9 @@
 package com.example.comitserver.controller;
 
 import com.example.comitserver.config.auth.CustomUserDetails;
-import com.example.comitserver.dto.StudyResponseDTO;
 import com.example.comitserver.dto.UserRequestDTO;
 import com.example.comitserver.dto.UserResponseDTO;
-import com.example.comitserver.entity.StudyEntity;
 import com.example.comitserver.entity.User;
-import com.example.comitserver.entity.UserEntity;
-import com.example.comitserver.service.NewUserService;
 import com.example.comitserver.service.UserService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.validation.Valid;
@@ -19,24 +15,22 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api")
 public class UserController {
 
-    private final NewUserService newUserService;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public UserController(NewUserService newUserService, ModelMapper modelMapper) {
-        this.newUserService = newUserService;
+    public UserController(UserService userService, ModelMapper modelMapper) {
+        this.userService = userService;
         this.modelMapper = modelMapper;
     }
 
 //    @GetMapping("/staffs")
 //    public ResponseEntity<?> getAllStaffProfiles() {
-//        List<UserEntity> users = userService.getAllUsersByStaffStatus(true);
+//        List<User> users = userService.getAllUsersByStaffStatus(true);
 //        List<UserResponseDTO> userDTOs = users.stream().map(entity -> modelMapper.map(entity, UserResponseDTO.class)).toList();
 //        return ResponseUtil.createSuccessResponse(userDTOs, HttpStatus.OK);
 //    }
@@ -44,7 +38,7 @@ public class UserController {
     @GetMapping("/profile")
     public ResponseEntity<?> getUserProfile(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getId();
-        User user = newUserService.showProfile(userId);
+        User user = userService.showProfile(userId);
         UserResponseDTO userDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(userDTO, HttpStatus.OK);
     }
@@ -52,8 +46,8 @@ public class UserController {
     @PatchMapping("/profile")
     public ResponseEntity<?> patchUserProfile(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Valid UserRequestDTO userDTO) {
         Long userId = ((CustomUserDetails) userDetails).getId();
-        User user = newUserService.showProfile(userId);
-        newUserService.updateProfile(userId, userDTO);
+        User user = userService.showProfile(userId);
+        userService.updateProfile(userId, userDTO);
         UserResponseDTO updatedUserDTO = modelMapper.map(user, UserResponseDTO.class);
         return ResponseUtil.createSuccessResponse(updatedUserDTO, HttpStatus.OK);
     }
@@ -61,8 +55,8 @@ public class UserController {
     @DeleteMapping("/profile")
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
         Long userId = ((CustomUserDetails) userDetails).getId();
-        User user = newUserService.showProfile(userId);
-        boolean deleted = newUserService.deleteUser(userId);
+        User user = userService.showProfile(userId);
+        boolean deleted = userService.deleteUser(userId);
 
         // 삭제 실패 시, Internal Server Error 응답 반환
         if (!deleted) {
@@ -77,7 +71,7 @@ public class UserController {
 //    @GetMapping("/profile/studies-created")
 //    public ResponseEntity<?> createStudy(@AuthenticationPrincipal UserDetails userDetails) {
 //        Long userId = ((CustomUserDetails) userDetails).getId();
-//        List<StudyEntity> createdStudies = userService.getCreatedStudies(userId);
+//        List<Study> createdStudies = userService.getCreatedStudies(userId);
 //        List<StudyResponseDTO> studyDTOs = createdStudies.stream().map(entity -> modelMapper.map(entity, StudyResponseDTO.class)).toList();
 //        return ResponseUtil.createSuccessResponse(studyDTOs, HttpStatus.OK);
 //    }

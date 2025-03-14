@@ -8,7 +8,6 @@ import com.example.comitserver.entity.RefreshEntity;
 import com.example.comitserver.entity.User;
 import com.example.comitserver.exception.DuplicateResourceException;
 import com.example.comitserver.repository.RefreshRepository;
-import com.example.comitserver.service.NewUserService;
 import com.example.comitserver.service.auth.AuthService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
