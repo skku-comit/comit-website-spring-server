@@ -27,18 +27,15 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class StudyController {
-
     private final StudyService studyService;
     private final ModelMapper modelMapper;
     private final StudyRepository studyRepository;
-    private final StudyUserRepository studyUserRepository;
 
     @Autowired
-    public StudyController(StudyService studyService, ModelMapper modelMapper, StudyRepository studyRepository, StudyUserRepository studyUserRepository) {
+    public StudyController(StudyService studyService, ModelMapper modelMapper, StudyRepository studyRepository) {
         this.studyService = studyService;
         this.modelMapper = modelMapper;
         this.studyRepository = studyRepository;
-        this.studyUserRepository = studyUserRepository;
     }
 
     @GetMapping("/studies")

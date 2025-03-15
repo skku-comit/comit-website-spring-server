@@ -44,7 +44,7 @@ public class StudyUserService {
     }
 
     public List<StudyUser> showStudyUsers(Long studyId) {
-        return studyUserRepository.findAllByStudyId(studyId);
+        return studyUserRepository.findByStudyId(studyId);
     }
 
     public StudyUser changeMemberPosition(StudyUser studyUser, StudyUserDTO studyUserDTO) {

@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class StudyUserDTO {
+    private Long id;
     private Long studyId;
     private Long userId;
     private Position position;
