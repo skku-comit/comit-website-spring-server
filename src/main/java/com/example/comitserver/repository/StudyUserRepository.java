@@ -10,6 +10,10 @@ public interface StudyUserRepository extends JpaRepository<StudyUser, Long> {
 
     List<StudyUser> findByUserId(Long userId);
 
+    List<StudyUser> findAllByStudyId(Long studyId);
+
+    List<StudyUser> findAllByUserId(Long userId);
+
     void deleteByStudyId(Long studyId);
 
     void deleteByUserId(Long userId);
