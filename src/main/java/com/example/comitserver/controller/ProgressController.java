@@ -44,8 +44,8 @@ public class ProgressController {
     }
 
     @PostMapping("/progress")
-    public ResponseEntity<ServerResponseDTO> postProgress(@RequestBody ProgressDTO progressDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (!studyService.isLeader(progressDTO.getStudyId(), customUserDetails)) {
+    public ResponseEntity<ServerResponseDTO> postProgress(@PathVariable Long studyId, @RequestBody ProgressDTO progressDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        if (!studyService.isLeader(studyId, customUserDetails)) {
             return ResponseUtil.createErrorResponse(HttpStatus.FORBIDDEN, "Progress/PermissionDenied", "the user does not have permission to create progress");
         }
 
