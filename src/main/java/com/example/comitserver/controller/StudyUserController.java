@@ -63,7 +63,7 @@ public class StudyUserController {
 
         StudyUser application = studyUserService.applyForStudy(studyId, customUserDetails);
 
-        return ResponseUtil.createSuccessResponse(modelMapper.map(application, StudyResponseDTO.class), HttpStatus.CREATED);
+        return ResponseUtil.createSuccessResponse(modelMapper.map(application, StudyUserDTO.class), HttpStatus.CREATED);
     }
 
     @PatchMapping("/applications/{userId}")
