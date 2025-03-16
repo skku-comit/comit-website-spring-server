@@ -54,6 +54,18 @@ public class StudyUserService {
         return studyUser;
     }
 
+    public Boolean isMember(Long studyId, CustomUserDetails customUserDetails) {
+        User user = userRepository.findById(customUserDetails.getId())
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getId()));
+        List<StudyUser> studyUsers = studyUserRepository.findByStudyId(studyId);
+        for (StudyUser studyUser : studyUsers) {
+            if (studyUser.getUser().equals(user) && studyUser.getPosition().equals(Position.MEMBER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Boolean isAppliedAlready(Long studyId, CustomUserDetails customUserDetails) {
         User user = userRepository.findById(customUserDetails.getId())
                 .orElseThrow(() -> new NoSuchElementException("User not found with id: " + customUserDetails.getId()));

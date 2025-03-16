@@ -33,7 +33,7 @@ public class ProgressService {
 
     public Progress createProgress(ProgressDTO progressDTO) {
         Study study = studyRepository.findById(progressDTO.getStudyId())
-                .orElseThrow(() -> new NoSuchElementException("Semester not found with id: " + progressDTO.getStudyId()));
+                .orElseThrow(() -> new NoSuchElementException("Study not found with id: " + progressDTO.getStudyId()));
 
         Progress progress = Progress.builder()
                 .study(study)
