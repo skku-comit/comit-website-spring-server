@@ -74,11 +74,12 @@ public class StudyUserController {
             return ResponseUtil.createErrorResponse(HttpStatus.FORBIDDEN, "Study/PermissionDenied", "the user does not have permission to change the applicants' position");
         }
 
+        if (studyUserDTO.getUserId().equals(customUserDetails.getId())) {
+            return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Study/CannotChangePositionOfLeader", "The leader position cannot be changed.");
+        }
+
         List<StudyUser> studyUsers = studyUserRepository.findByStudyId(studyId);
         for (StudyUser studyUser : studyUsers) {
-            if (studyUser.getUser().getId().equals(customUserDetails.getId())) {
-                return ResponseUtil.createErrorResponse(HttpStatus.BAD_REQUEST, "Study/CannotChangePositionOfLeader", "The leader position cannot be changed.");
-            }
             if (studyUser.getUser().getId().equals(userId)) {
                 studyUserService.changeMemberPosition(studyUser, studyUserDTO);
                 return ResponseUtil.createSuccessResponse(modelMapper.map(studyUser, StudyUserDTO.class), HttpStatus.OK);
