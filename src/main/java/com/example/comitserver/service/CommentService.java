@@ -49,7 +49,7 @@ public class CommentService {
         Comment newComment = Comment.builder()
                 .study(study)
                 .user(user)
-                .dateTime(stringToLocalDateTime(commentDTO.getDateTime()))
+                .editedDateTime(stringToLocalDateTime(commentDTO.getEditedDateTime()))
                 .text(commentDTO.getText())
                 .build();
         commentRepository.save(newComment);
@@ -60,8 +60,8 @@ public class CommentService {
     public Comment updateComment(Long id, CommentDTO commentDTO) {
         Comment updatingComment = showComment(id);
 
-        if (commentDTO.getDateTime() != null) {
-            updatingComment.setDateTime(stringToLocalDateTime(commentDTO.getDateTime()));
+        if (commentDTO.getEditedDateTime() != null) {
+            updatingComment.setEditedDateTime(stringToLocalDateTime(commentDTO.getEditedDateTime()));
         }
         if (commentDTO.getText() != null) {
             updatingComment.setText(commentDTO.getText());

@@ -26,7 +26,7 @@ public class Comment {
     private User user;
 
     @Column(nullable = false)
-    private LocalDateTime dateTime;
+    private LocalDateTime editedDateTime;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String text;

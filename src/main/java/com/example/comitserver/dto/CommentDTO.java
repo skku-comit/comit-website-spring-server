@@ -7,6 +7,6 @@ public class CommentDTO {
     private Long id;
     private Long studyId;
     private Long userId;
-    private String dateTime;
+    private String editedDateTime;
     private String text;
 }

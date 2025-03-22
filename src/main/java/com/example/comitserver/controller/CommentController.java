@@ -43,7 +43,7 @@ public class CommentController {
     }
 
     @PostMapping("/comments")
-    public ResponseEntity<ServerResponseDTO> postProgress(@PathVariable Long studyId, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<ServerResponseDTO> postComment(@PathVariable Long studyId, @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if (!studyUserService.isMember(studyId, customUserDetails)) {
             return ResponseUtil.createErrorResponse(HttpStatus.FORBIDDEN, "Progress/PermissionDenied", "the user does not have permission to create comment");
         }
