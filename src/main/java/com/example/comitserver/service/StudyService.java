@@ -2,6 +2,7 @@ package com.example.comitserver.service;
 
 import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.StudyRequestDTO;
+import com.example.comitserver.dto.StudyUserDTO;
 import com.example.comitserver.entity.*;
 import com.example.comitserver.entity.enumeration.Position;
 import com.example.comitserver.entity.enumeration.Status;
@@ -121,7 +122,7 @@ public class StudyService {
         studyRepository.delete(deletingStudy);
     }
 
-    public Boolean identification(Long id, CustomUserDetails customUserDetails) {
+    public Boolean isLeader(Long id, CustomUserDetails customUserDetails) {
         Long leaderId = -1L;
         List<StudyUser> studyUsers = studyUserRepository.findByStudyId(id);
         for (StudyUser studyUser : studyUsers) {

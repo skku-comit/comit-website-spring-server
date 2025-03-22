@@ -77,12 +77,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/login", "/api/signup", "/api/logout", "/api/reissue").permitAll()
                         // /admin 경로는 ADMIN 역할만 접근 가능
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        // /admin 외의 GET PATCH PUT 요청은 MEMBER, VERIFIED, ADMIN 모두 접근 가능
+                        // /admin 외의 GET POST PATCH PUT 요청은 MEMBER, ADMIN 모두 접근 가능
                         .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         .requestMatchers(HttpMethod.PATCH, "/api/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/**").permitAll()
-                        // /admin 외의 POST 요청은 VERIFIED와 ADMIN만 접근 가능
-                        .requestMatchers(HttpMethod.POST, "/api/**").hasAnyRole("ADMIN", "VERIFIED")
+                        .requestMatchers(HttpMethod.POST, "/api/**").permitAll()
                         // 나머지 요청은 인증된 사용자만 접근 가능
                         .anyRequest().authenticated()
                 )
