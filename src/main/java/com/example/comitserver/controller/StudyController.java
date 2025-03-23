@@ -4,8 +4,11 @@ import com.example.comitserver.config.auth.CustomUserDetails;
 import com.example.comitserver.dto.ServerResponseDTO;
 import com.example.comitserver.dto.StudyRequestDTO;
 import com.example.comitserver.dto.StudyResponseDTO;
+import com.example.comitserver.dto.StudyUserDTO;
 import com.example.comitserver.entity.Study;
+import com.example.comitserver.entity.StudyUser;
 import com.example.comitserver.repository.StudyRepository;
+import com.example.comitserver.repository.StudyUserRepository;
 import com.example.comitserver.service.StudyService;
 import com.example.comitserver.utils.ResponseUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +27,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class StudyController {
-
     private final StudyService studyService;
     private final ModelMapper modelMapper;
     private final StudyRepository studyRepository;
@@ -49,12 +51,12 @@ public class StudyController {
     @GetMapping("/studies/{id}")
     public ResponseEntity<ServerResponseDTO> getStudyById(@PathVariable Long id) {
         if (studyRepository.findById(id).isEmpty()) {
-            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
+            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "Study with the given ID was not found");
         }
 
         Study study = studyService.showStudy(id);
 
-        return ResponseUtil.createSuccessResponse(study, HttpStatus.OK);
+        return ResponseUtil.createSuccessResponse(modelMapper.map(study, StudyResponseDTO.class), HttpStatus.OK);
         //return ResponseEntity.ok(modelMapper.map(study, StudyResponseDTO.class));
     }
 
@@ -75,10 +77,10 @@ public class StudyController {
     @PatchMapping("/studies/{id}")
     public ResponseEntity<ServerResponseDTO> patchStudy(@PathVariable Long id, @RequestBody StudyRequestDTO studyRequestDTO, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         if (studyRepository.findById(id).isEmpty()) {
-            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
+            return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "Study with the given ID was not found");
         }
 
-        if (studyService.identification(id, customUserDetails)) {
+        if (studyService.isLeader(id, customUserDetails)) {
             Study existingStudy = studyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Study not found"));
 
             studyService.updateStudy(id, studyRequestDTO);
@@ -89,9 +91,9 @@ public class StudyController {
 
     @DeleteMapping("/studies/{id}")
     public ResponseEntity<ServerResponseDTO> deleteStudy(@PathVariable Long id, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "study with that id not found");
+        if (studyRepository.findById(id).isEmpty()) return ResponseUtil.createErrorResponse(HttpStatus.NOT_FOUND, "Study/CannotFindId", "Study with the given ID was not found");
 
-        if(studyService.identification(id, customUserDetails)) {
+        if(studyService.isLeader(id, customUserDetails)) {
             Study deletedStudy = studyService.showStudy(id);
             StudyResponseDTO studyResponseDTO = modelMapper.map(deletedStudy, StudyResponseDTO.class);
 
