@@ -37,6 +37,7 @@ public class AuthService {
                 .password(bCryptPasswordEncoder.encode(signUpRequestDTO.getPassword()))
                 .phoneNumber(signUpRequestDTO.getPhoneNumber())
                 .studentId(signUpRequestDTO.getStudentId())
+                .major(signUpRequestDTO.getMajor())
                 .email(signUpRequestDTO.getEmail())
                 .role(Role.ROLE_MEMBER)
                 .build();

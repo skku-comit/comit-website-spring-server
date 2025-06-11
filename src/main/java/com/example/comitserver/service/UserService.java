@@ -57,6 +57,9 @@ public class UserService {
     }
 
     private void updateUserFields(User user, UserRequestDTO userDTO) {
+        if (userDTO.getMajor() != null) {
+            user.setMajor(userDTO.getMajor());
+        }
         if (userDTO.getPhoneNumber() != null) {
             user.setPhoneNumber(userDTO.getPhoneNumber());
         }

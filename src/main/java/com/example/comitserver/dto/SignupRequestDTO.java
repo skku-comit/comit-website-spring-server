@@ -29,6 +29,10 @@ public class SignupRequestDTO {
     @Pattern(regexp = "\\d{10}", message = "Student ID must be exactly 10 digits long.")
     private String studentId;
 
+    @NotBlank(message = "Major is required.")
+    @Size(min = 2, max = 20, message = "Major must be between 2 and 20 characters.")
+    private String major;
+
     @NotBlank(message = "Email is required.")
     @Email(message = "Please enter a valid email address.")
     private String email;

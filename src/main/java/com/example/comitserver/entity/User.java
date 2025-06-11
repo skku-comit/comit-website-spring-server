@@ -31,6 +31,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String studentId;
 
+    @Column(nullable = false)
+    private String major;
+
     @Column(unique = true, nullable = false)
     private String email;
 
