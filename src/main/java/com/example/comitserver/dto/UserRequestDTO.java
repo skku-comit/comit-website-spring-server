@@ -20,6 +20,9 @@ public class UserRequestDTO {
     @Pattern(regexp = "\\d{10}", message = "Student ID must be exactly 10 digits long.")
     private String studentId;
 
+    @Size(min = 2, max = 20, message = "Major must be between 2 and 20 characters.")
+    private String major;
+
     @Email(message = "Please enter a valid email address.")
     private String email;
 
