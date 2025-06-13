@@ -14,5 +14,6 @@ public class UserResponseDTO {
     private String imageSrc;
     private String github;
     private String blog;
+    private String role;
 
 }
